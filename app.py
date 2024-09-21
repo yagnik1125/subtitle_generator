@@ -250,6 +250,9 @@ if st.button("Transcribe and Translate Audio"):
     elif uploaded_vedio_file is not None:
         # st.write("Vedio transcription starts...")
         audio_file = video2mp3(vedio_file_name)
+        with open("temp_audio_file", "wb") as f:
+            f.write(audio_file.getbuffer())
+        audio_path = "temp_audio_file"
 
     else:
         st.error("Please upload an audio file.")
