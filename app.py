@@ -290,7 +290,8 @@ if st.button("Transcribe and Translate Audio"):
         filename = f"chunk.wav"
         audio.export(filename, format="wav")
         with open(filename, "rb") as file:
-            transcription = client.audio.transcriptions.create(
+            # transcription = client.audio.transcriptions.create(
+            transcription = client.audio.translations.create(
                 file=(filename, file.read()),  # Required audio file
                 model="whisper-large-v3",  # Required model for transcription
                 prompt="transcribe",
