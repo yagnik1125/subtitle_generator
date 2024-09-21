@@ -444,20 +444,16 @@ if st.button("Transcribe and Translate Audio"):
         # Append the chunk transcription to full transcription
         transcription_segment=transcription.segments
         translation_segment=copy.deepcopy(transcription_segment)
-        translation_segment[0]['text']=translate_text(translation_segment[0]['text'], selected_lang_tar)
+        # translation_segment[0]['text']=translate_text(translation_segment[0]['text'], selected_lang_tar)
         
-
-        # for seg in translation_segment:
-        #     # st.write(seg['text'])
-        #     # seg['text']=translate_text(seg['text'], selected_lang_tar)
-        #     seg['text']=translate_text(seg['text'], 'english')
+        for seg in translation_segment:
+            # st.write(seg['text'])
+            seg['text']=translate_text(seg['text'], selected_lang_tar)
+            # seg['text']=translate_text(seg['text'], 'english')
 
         # for i in range(len(transcription_segment)):
         #     st.write(transcription_segment[i]['text'])
         #     st.write(translation_segment[i]['text'])
-
-        st.write(translation_segment[0])
-        st.write(transcription_segment[0])
 
         # transcription_text = transcription.text
         # full_transcription += transcription_text + " "
@@ -503,17 +499,17 @@ if st.button("Transcribe and Translate Audio"):
         # st.write(f"Final Translation:")
         # st.write(full_translation)
 
-        # # --------------------------subtitle start----------------------------------------------
-        # subtitle_file = "output_subtitle.vtt"
-        # write_vtt(transcription_segment, subtitle_file)
+        # --------------------------subtitle start----------------------------------------------
+        subtitle_file = "output_subtitle.vtt"
+        write_vtt(translation_segment, subtitle_file)
 
-        # output_video = "output_video_with_subtitles.mp4"
-        # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, get_font_for_language(selected_lang_tar))
-        # # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, 'Noto Sans Devanagari')
-        # # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video)
+        output_video = "output_video_with_subtitles.mp4"
+        add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, get_font_for_language(selected_lang_tar))
+        # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, 'Noto Sans Devanagari')
+        # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video)
 
-        # st.video(output_video)
-        # # --------------------------subtitle end----------------------------------------------
+        st.video(output_video)
+        # --------------------------subtitle end----------------------------------------------
         # #------------------------------------vedio generator--------------------------------------
 
         # write_vtt(transcription_segment, os.path.join("/", vedio_file_name + ".vtt"))
