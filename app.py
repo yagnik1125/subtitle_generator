@@ -298,6 +298,7 @@ if st.button("Transcribe and Translate Audio"):
             )
         # Append the chunk transcription to full transcription
         transcription_segment=transcription.segments
+        st.write(transcription_segment)
         transcription_text = transcription.text
         full_transcription += transcription_text + " "
         # --------------------without chunk ends--------------------------------------------------
