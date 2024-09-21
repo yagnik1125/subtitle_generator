@@ -129,8 +129,8 @@ def add_subtitles_to_video(input_video, input_subtitle, output_video, font="Noto
             .output(
                 output_video,
                 vf=f"subtitles={input_subtitle}:force_style='FontName={font}'",  # Applying subtitles with font style
-                c:v="libx264",  # Re-encode video to ensure filtering works
-                c:a="aac",  # Re-encode audio
+                vcodec="libx264",  # Re-encode video to ensure filtering works
+                acodec="aac",  # Re-encode audio
                 strict="experimental"  # Required for AAC audio
             )
         )
