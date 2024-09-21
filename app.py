@@ -103,7 +103,7 @@ def translate_text(text, targ_lang):
             messages=[
                 {
                     "role": "system",
-                    "content": f"Translate this text to '{targ_lang}'. Text:{text}. ONLY RETURN TRANSLATED TEXT DO NOT WRITE ANYTHING ELSE",
+                    "content": f"Translate this text to '{targ_lang}.' Translate the text even if it is in '{targ_lang}'. Text:{text}. ONLY RETURN TRANSLATED TEXT DO NOT WRITE ANYTHING ELSE",
                 }
             ],
             model="llama-3.1-70b-versatile",
