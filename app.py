@@ -303,7 +303,11 @@ if st.button("Transcribe and Translate Audio"):
         for seg in translation_segment:
             # st.write(seg['text'])
             seg['text']=translate_text(seg['text'], selected_lang_tar)
-        st.write(translation_segment)
+
+        for i in range(len(transcription_segment)):
+            st.write(transcription_segment[i]['text'])
+            st.write(translation_segment[i]['text'])
+        # st.write(translation_segment)
         # st.write(transcription_segment)
         # transcription_text = transcription.text
         # full_transcription += transcription_text + " "
