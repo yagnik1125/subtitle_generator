@@ -299,7 +299,7 @@ if st.button("Transcribe and Translate Audio"):
             )
         # Append the chunk transcription to full transcription
         transcription_segment=transcription.segments
-        translation_segment=transcription_segment.copy()
+        translation_segment=[seg for seg in transcription_segment]
         for seg in translation_segment:
             # st.write(seg['text'])
             seg['text']=translate_text(seg['text'], selected_lang_tar)
