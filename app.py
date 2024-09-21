@@ -45,7 +45,8 @@ if uploaded_vedio_file is not None:
     # st.write(f"Total frames: {total_frames}")
     # st.write(f"Frame rate: {frame_rate} fps")
     # st.write(f"Duration: {duration} seconds")
-    st.video(uploaded_vedio_file)
+    
+    # st.video(uploaded_vedio_file)
     video_capture.release()
     # os.remove(tfile.name)
 
