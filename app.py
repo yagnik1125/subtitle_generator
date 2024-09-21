@@ -299,8 +299,10 @@ if st.button("Transcribe and Translate Audio"):
             )
         # Append the chunk transcription to full transcription
         transcription_segment=transcription.segments
-        for seg in transcription_segment:
-            st.write(seg)
+        translation_segment=transcription_segment
+        for seg in translation_segment:
+            # st.write(seg)
+            seg.text=translate_text(seg.text, selected_lang_tar)
         # st.write(transcription_segment)
         # transcription_text = transcription.text
         # full_transcription += transcription_text + " "
@@ -346,7 +348,7 @@ if st.button("Transcribe and Translate Audio"):
         # st.write(f"Final Translation:")
         # st.write(full_translation)
 
-        write_vtt(transcription_segment, os.path.join("/", vedio_file_name + ".vtt"))
+        write_vtt(translation_segment, os.path.join("/", vedio_file_name + ".vtt"))
         os.system(f'ffmpeg -i "{vedio_file_name}" -vf subtitles="{vedio_file_name}.vtt" "{vedio_file_name}_subtitled.mp4" ')
 
         st.video(f"{vedio_file_name}_subtitled.mp4")
