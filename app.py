@@ -120,23 +120,25 @@ def translate_text(text, targ_lang):
 #     ]
 #     subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def add_subtitles_to_video(input_video: str, input_subtitle: str, output_video: str, font_name: str = 'Noto Sans Devanagari'):
+def add_subtitles_to_video(input_video, input_subtitle, output_video, font="Noto Sans Devanagari"):
     try:
-        # Build the FFmpeg filter for subtitles with custom font
-        ffmpeg_input = ffmpeg.input(input_video)
+        # Add subtitles filter with force_style option to specify font
         ffmpeg_output = (
-            ffmpeg_input
+            ffmpeg
+            .input(input_video)
             .output(
                 output_video,
-                vf=f"subtitles={input_subtitle}:force_style='FontName={font_name}'",
-                c='copy'
+                vf=f"subtitles={input_subtitle}:force_style='FontName={font}'",  # Applying subtitles with font style
+                c:v="libx264",  # Re-encode video to ensure filtering works
+                c:a="aac",  # Re-encode audio
+                strict="experimental"  # Required for AAC audio
             )
         )
 
         # Run the ffmpeg process
         ffmpeg_output.run(overwrite_output=True)
-        print(f"Subtitles added successfully to {output_video} using font {font_name}.")
-    
+        print(f"Subtitles added successfully to {output_video} using font {font}")
+
     except ffmpeg.Error as e:
         print(f"An error occurred: {e.stderr.decode()}")
 
