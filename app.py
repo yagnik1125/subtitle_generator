@@ -66,6 +66,11 @@ if mic_audio:
     # st.audio(audio_file_like, format='wav')
 
 
+def get_audio_buffer(audio_file):
+    with open(audio_file, "rb") as f:
+        audio_buffer = io.BytesIO(f.read())  # Read the file and store it in BytesIO buffer
+    return audio_buffer
+
 def video2mp3(video_file, output_ext="mp3"):
     filename, ext = os.path.splitext(video_file)
     subprocess.call(["ffmpeg", "-y", "-i", video_file, f"{filename}.{output_ext}"], 
@@ -250,9 +255,9 @@ if st.button("Transcribe and Translate Audio"):
     elif uploaded_vedio_file is not None:
         # st.write("Vedio transcription starts...")
         audio_file = video2mp3(vedio_file_name)
-        with open("temp_audio_file", "wb") as f:
-            f.write(audio_file.getbuffer())
-        audio_path = "temp_audio_file"
+        audio_buffer = get_audio_buffer(audio_file)
+        st.audio(audio_buffer)
+
 
     else:
         st.error("Please upload an audio file.")
