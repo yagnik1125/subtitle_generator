@@ -326,20 +326,20 @@ if st.button("Transcribe and Translate Audio"):
             chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
             full_translation += chunk_translation + " "
 
-            # # Show progress on the frontend
-            # st.write(f"Processed chunk {i+1}/{len(chunks)}")
-            # st.audio(chunk_filename, format="wav") 
-            # st.write(f"Chunk Transcription: {chunk_transcription_text}")
-            # st.write(f"Chunk Translation: {chunk_translation}")
+            # Show progress on the frontend
+            st.write(f"Processed chunk {i+1}/{len(chunks)}")
+            st.audio(chunk_filename, format="wav") 
+            st.write(f"Chunk Transcription: {chunk_transcription_text}")
+            st.write(f"Chunk Translation: {chunk_translation}")
 
         #----------------------------------chunk wise end----------------------------------------------------------
 
-        # # Show the final combined transcription and translation
-        # st.write("Final Transcription:")
-        # st.write(full_transcription)
+        # Show the final combined transcription and translation
+        st.write("Final Transcription:")
+        st.write(full_transcription)
 
-        # st.write(f"Final Translation:")
-        # st.write(full_translation)
+        st.write(f"Final Translation:")
+        st.write(full_translation)
 
     else:
         st.error("Please upload an audio file.")
