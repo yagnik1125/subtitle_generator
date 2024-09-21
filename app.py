@@ -28,12 +28,15 @@ if mic_audio:
     st.audio(mic_audio['bytes'], format='wav')
 mic_audio_file_name='temp_mic_audio.wav'
 
+vedio_file_name=""
 uploaded_vedio_file = st.file_uploader("Upload a video file", type=["mp4", "mov", "avi", "mkv"])
 if uploaded_vedio_file is not None:
     tfile = tempfile.NamedTemporaryFile(delete=False)
     tfile.write(uploaded_vedio_file.read())
     video_capture = cv2.VideoCapture(tfile.name)
 
+    vedio_file_name = tfile.name
+    st.write(f"File saved at: {vedio_file_name}")
     st.text("Video Loaded Successfully!")
     total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
     frame_rate = int(video_capture.get(cv2.CAP_PROP_FPS))
