@@ -45,7 +45,7 @@ if uploaded_vedio_file is not None:
     # st.write(f"Total frames: {total_frames}")
     # st.write(f"Frame rate: {frame_rate} fps")
     # st.write(f"Duration: {duration} seconds")
-    
+
     # st.video(uploaded_vedio_file)
     video_capture.release()
     # os.remove(tfile.name)
@@ -299,6 +299,8 @@ if st.button("Transcribe and Translate Audio"):
             )
         # Append the chunk transcription to full transcription
         transcription_segment=transcription.segments
+        for seg in transcription_segment:
+            st.write(seg)
         # st.write(transcription_segment)
         # transcription_text = transcription.text
         # full_transcription += transcription_text + " "
