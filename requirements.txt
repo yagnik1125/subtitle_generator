@@ -1,0 +1,8 @@
+streamlit
+pydub
+groq==0.11.0
+# libretranslatepy==2.1.0
+python-dotenv
+streamlit-mic-recorder
+opencv-python
+numpy
