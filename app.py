@@ -360,9 +360,13 @@ if st.button("Transcribe and Translate Audio"):
 
         # #------------------------------------vedio generator--------------------------------------
 
-        write_vtt(transcription_segment, os.path.join("/", vedio_file_name + ".vtt"))
+        font_path = "./NotoSansDevanagari-VariableFont_wdth,wght.ttf"
 
-        ffmpeg_command = f'ffmpeg -i "{vedio_file_name}" -vf "subtitles={vedio_file_name}.vtt:force_style=\'Fontfile=NotoSansDevanagari-VariableFont_wdth,wght.ttf\'" "{vedio_file_name}_subtitled.mp4" '
+        # Generate subtitles in VTT format
+        write_vtt(transcription_segment, os.path.join("/", vedio_file_name + ".vtt"))
+        
+        # FFmpeg command to burn subtitles into video with correct font
+        ffmpeg_command = f'ffmpeg -i "{vedio_file_name}" -vf "subtitles={vedio_file_name}.vtt:force_style=\'FontFile={font_path}\'" "{vedio_file_name}_subtitled.mp4" -y'
         os.system(ffmpeg_command)
 
 
