@@ -244,5 +244,8 @@ if st.button("Transcribe and Translate Audio"):
         st.write(f"Final Translation:")
         st.write(full_translation)
 
+    elif uploaded_vedio_file is not None:
+        st.write("Vedio transcription starts...")
+
     else:
         st.error("Please upload an audio file.")
