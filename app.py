@@ -112,6 +112,12 @@ def translate_text(text, targ_lang):
         print(f"An error occurred: {str(e)}")
         return None
 
+def add_subtitles_to_video(input_video, subtitle_file, output_video):
+    # Use FFmpeg to add the subtitle to the video
+    command = [
+        'ffmpeg', '-y', '-i', input_video, '-vf', f"subtitles={subtitle_file}", output_video
+    ]
+    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 selected_lang_tar = st.selectbox("Select the target language for translation", ['afrikaans', 'albanian', 'amharic', 'arabic', 'armenian', 'azerbaijani', 'basque', 'belarusian', 'bengali', 'bosnian', 'bulgarian', 'catalan', 'cebuano', 'chichewa', 'chinese (simplified)', 'chinese (traditional)', 'corsican', 'croatian', 'czech', 'danish', 'dutch', 'english', 'esperanto', 'estonian', 'filipino', 'finnish', 'french', 'frisian', 'galician', 'georgian', 'german', 'greek', 'gujarati', 'haitian creole', 'hausa', 'hawaiian', 'hebrew', 'hebrew', 'hindi', 'hmong', 'hungarian', 'icelandic', 'igbo', 'indonesian', 'irish', 'italian', 'japanese', 'javanese', 'kannada', 'kazakh', 'khmer', 'korean', 'kurdish (kurmanji)', 'kyrgyz', 'lao', 'latin', 'latvian', 'lithuanian', 'luxembourgish', 'macedonian', 'malagasy', 'malay', 'malayalam', 'maltese', 'maori', 'marathi', 'mongolian', 'myanmar (burmese)', 'nepali', 'norwegian', 'odia', 'pashto', 'persian', 'polish', 'portuguese', 'punjabi', 'romanian', 'russian', 'samoan', 'scots gaelic', 'serbian', 'sesotho', 'shona', 'sindhi', 'sinhala', 'slovak', 'slovenian', 'somali', 'spanish', 'sundanese', 'swahili', 'swedish', 'tajik', 'tamil', 'telugu', 'thai', 'turkish', 'ukrainian', 'urdu', 'uyghur', 'uzbek', 'vietnamese', 'welsh', 'xhosa', 'yiddish', 'yoruba', 'zulu'])
 
@@ -301,6 +307,16 @@ if st.button("Transcribe and Translate Audio"):
         # Append the chunk transcription to full transcription
         transcription_segment=transcription.segments
 
+        # --------------------------subtitle start----------------------------------------------
+        subtitle_file = "output_subtitle.vtt"
+        write_vtt(transcription_segment, subtitle_file)
+
+        output_video = "output_video_with_subtitles.mp4"
+        add_subtitles_to_video(vedio_file_name, subtitle_file, output_video)
+
+        st.video(output_video)
+        # --------------------------subtitle end----------------------------------------------
+
         # translation_segment=list(transcription.segments)
         # for seg in translation_segment:
         #     # st.write(seg['text'])
@@ -360,10 +376,10 @@ if st.button("Transcribe and Translate Audio"):
 
         # #------------------------------------vedio generator--------------------------------------
 
-        write_vtt(transcription_segment, os.path.join("/", vedio_file_name + ".vtt"))
-        os.system(f'ffmpeg -i "{vedio_file_name}" -vf subtitles="{vedio_file_name}.vtt" "{vedio_file_name}_subtitled.mp4" ')
+        # write_vtt(transcription_segment, os.path.join("/", vedio_file_name + ".vtt"))
+        # os.system(f'ffmpeg -i "{vedio_file_name}" -vf subtitles="{vedio_file_name}.vtt" "{vedio_file_name}_subtitled.mp4" ')
 
-        st.video(f"{vedio_file_name}_subtitled.mp4")
+        # st.video(f"{vedio_file_name}_subtitled.mp4")
 
     else:
         st.error("Please upload an audio file.")
