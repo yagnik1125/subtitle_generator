@@ -82,7 +82,7 @@ def video2mp3(video_file, output_ext="mp3"):
 
 
 def write_vtt(segments, file_path):
-    with open(file_path, 'w') as vtt_file:
+    with open(file_path, 'w', encoding="utf-8") as vtt_file:
         vtt_file.write("WEBVTT\n\n")
         for i, segment in enumerate(segments):
             start = segment['start']
