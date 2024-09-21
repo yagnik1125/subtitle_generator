@@ -10,6 +10,7 @@ import wave
 import io
 import subprocess
 import cv2
+import ffmpeg
 
 
 # Initialize the Groq client
@@ -119,52 +120,25 @@ def translate_text(text, targ_lang):
 #     ]
 #     subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def add_subtitles_to_video(input_video: str, subtitle_file: str, output_video: str, font_name: str = None, verbose: bool = False):
-    """
-    Add subtitles to a video using FFmpeg with optional font support and verbose logging.
-    
-    Args:
-        input_video (str): Path to the input video file.
-        subtitle_file (str): Path to the subtitle file (.srt).
-        output_video (str): Path to save the output video file with subtitles.
-        font_name (str, optional): Font name to use for rendering subtitles. Default is None.
-        verbose (bool, optional): Whether to display FFmpeg output. Default is False.
-    """
-    
-    # Base command for adding subtitles
-    command = ['ffmpeg', '-i', input_video]
-    
-    # Add the filter for subtitles with or without a specified font
-    if font_name:
-        # Use the specified font for subtitles rendering
-        command.extend(['-vf', f"subtitles={subtitle_file}:force_style='FontName={font_name}'"])
-    else:
-        # No custom font, just apply the subtitles
-        command.extend(['-vf', f"subtitles={subtitle_file}"])
-    
-    # Copy audio to avoid re-encoding
-    command.extend(['-c:a', 'copy', output_video])
-    
-    # Add FFmpeg verbose flag if needed
-    if verbose:
-        command.append('-loglevel')
-        command.append('verbose')
-    
+def add_subtitles_to_video(input_video: str, input_subtitle: str, output_video: str, font_name: str = 'Noto Sans Devanagari'):
     try:
-        # Execute the ffmpeg command with a timeout (e.g., 300 seconds = 5 minutes)
-        result = subprocess.run(command, check=True, capture_output=True, text=True, timeout=300)
-        
-        if verbose:
-            print(result.stdout)
-        
-        print(f"Subtitles added to {output_video} successfully.")
-        
-    except subprocess.TimeoutExpired:
-        print("FFmpeg process timed out.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error occurred: {e}")
-        if verbose:
-            print(e.stderr)
+        # Build the FFmpeg filter for subtitles with custom font
+        ffmpeg_input = ffmpeg.input(input_video)
+        ffmpeg_output = (
+            ffmpeg_input
+            .output(
+                output_video,
+                vf=f"subtitles={input_subtitle}:force_style='FontName={font_name}'",
+                c='copy'
+            )
+        )
+
+        # Run the ffmpeg process
+        ffmpeg_output.run(overwrite_output=True)
+        print(f"Subtitles added successfully to {output_video} using font {font_name}.")
+    
+    except ffmpeg.Error as e:
+        print(f"An error occurred: {e.stderr.decode()}")
 
 
 
@@ -361,7 +335,7 @@ if st.button("Transcribe and Translate Audio"):
         write_vtt(transcription_segment, subtitle_file)
 
         output_video = "output_video_with_subtitles.mp4"
-        add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, 'Noto Sans Devanagari', verbose=True)
+        add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, 'Noto Sans Devanagari')
         # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video)
 
         st.video(output_video)
