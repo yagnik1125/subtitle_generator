@@ -298,9 +298,9 @@ if st.button("Transcribe and Translate Audio"):
             )
         # Append the chunk transcription to full transcription
         transcription_segment=transcription.segments
-        st.write(transcription_segment)
-        transcription_text = transcription.text
-        full_transcription += transcription_text + " "
+        # st.write(transcription_segment)
+        # transcription_text = transcription.text
+        # full_transcription += transcription_text + " "
         # --------------------without chunk ends--------------------------------------------------
 
         # #----------------------------------chunk wise end----------------------------------------------------------
@@ -336,15 +336,15 @@ if st.button("Transcribe and Translate Audio"):
 
         # #----------------------------------chunk wise end----------------------------------------------------------
 
-        # Show the final combined transcription and translation
-        st.write("Final Transcription:")
-        st.write(full_transcription)
+        # # Show the final combined transcription and translation
+        # st.write("Final Transcription:")
+        # st.write(full_transcription)
 
         # st.write(f"Final Translation:")
         # st.write(full_translation)
 
-        # write_vtt(full_transcription, os.path.join("/", vedio_file_name + ".vtt"))
-        # os.system(f'ffmpeg -i "{vedio_file_name}" -vf subtitles="{vedio_file_name}.vtt" "{vedio_file_name}_subtitled.mp4" ')
+        write_vtt(transcription_segment, os.path.join("/", vedio_file_name + ".vtt"))
+        os.system(f'ffmpeg -i "{vedio_file_name}" -vf subtitles="{vedio_file_name}.vtt" "{vedio_file_name}_subtitled.mp4" ')
 
     else:
         st.error("Please upload an audio file.")
