@@ -36,18 +36,18 @@ if uploaded_vedio_file is not None:
     video_capture = cv2.VideoCapture(tfile.name)
 
     vedio_file_name = tfile.name
-    st.write(f"File saved at: {vedio_file_name}")
-    st.text("Video Loaded Successfully!")
+    st.write(f"Vedio File saved at: {vedio_file_name}")
+    # st.text("Video Loaded Successfully!")
     total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
     frame_rate = int(video_capture.get(cv2.CAP_PROP_FPS))
     duration = total_frames / frame_rate
 
-    st.write(f"Total frames: {total_frames}")
-    st.write(f"Frame rate: {frame_rate} fps")
-    st.write(f"Duration: {duration} seconds")
+    # st.write(f"Total frames: {total_frames}")
+    # st.write(f"Frame rate: {frame_rate} fps")
+    # st.write(f"Duration: {duration} seconds")
     st.video(uploaded_vedio_file)
     video_capture.release()
-    os.remove(tfile.name)
+    # os.remove(tfile.name)
 
 if mic_audio:
     # Get the byte data from the audio recorder
@@ -248,7 +248,8 @@ if st.button("Transcribe and Translate Audio"):
         st.write(full_translation)
 
     elif uploaded_vedio_file is not None:
-        st.write("Vedio transcription starts...")
+        # st.write("Vedio transcription starts...")
+        audio_file = video2mp3(vedio_file_name)
 
     else:
         st.error("Please upload an audio file.")
