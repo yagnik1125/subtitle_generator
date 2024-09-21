@@ -78,6 +78,21 @@ def video2mp3(video_file, output_ext="mp3"):
                     stderr=subprocess.STDOUT)
     return f"{filename}.{output_ext}"
 
+
+def write_vtt(segments, file_path):
+    with open(file_path, 'w') as vtt_file:
+        vtt_file.write("WEBVTT\n\n")
+        for i, segment in enumerate(segments):
+            start = segment['start']
+            end = segment['end']
+            text = segment['text']
+            # Convert start and end times to VTT format (HH:MM:SS.mmm)
+            start_time = "{:02}:{:02}:{:06.3f}".format(int(start // 3600), int((start % 3600) // 60), start % 60)
+            end_time = "{:02}:{:02}:{:06.3f}".format(int(end // 3600), int((end % 3600) // 60), end % 60)
+            vtt_file.write(f"{i}\n")
+            vtt_file.write(f"{start_time} --> {end_time}\n")
+            vtt_file.write(f"{text}\n\n")
+
 def translate_text(text, targ_lang):
     try:
         chat_completion = client.chat.completions.create(
@@ -262,8 +277,8 @@ if st.button("Transcribe and Translate Audio"):
         audio = audio.set_channels(1)  # Ensure mono channel
         audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
 
-        # Split the audio into chunks (10 sec per chunk)
-        chunk_duration_ms = 10000  
+        # Split the audio into chunks (3 sec per chunk)
+        chunk_duration_ms = 3000  
         chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
 
         # Variables to store full transcription and translation
@@ -311,20 +326,20 @@ if st.button("Transcribe and Translate Audio"):
             chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
             full_translation += chunk_translation + " "
 
-            # Show progress on the frontend
-            st.write(f"Processed chunk {i+1}/{len(chunks)}")
-            st.audio(chunk_filename, format="wav") 
-            st.write(f"Chunk Transcription: {chunk_transcription_text}")
-            st.write(f"Chunk Translation: {chunk_translation}")
+            # # Show progress on the frontend
+            # st.write(f"Processed chunk {i+1}/{len(chunks)}")
+            # st.audio(chunk_filename, format="wav") 
+            # st.write(f"Chunk Transcription: {chunk_transcription_text}")
+            # st.write(f"Chunk Translation: {chunk_translation}")
 
         #----------------------------------chunk wise end----------------------------------------------------------
 
-        # Show the final combined transcription and translation
-        st.write("Final Transcription:")
-        st.write(full_transcription)
+        # # Show the final combined transcription and translation
+        # st.write("Final Transcription:")
+        # st.write(full_transcription)
 
-        st.write(f"Final Translation:")
-        st.write(full_translation)
+        # st.write(f"Final Translation:")
+        # st.write(full_translation)
 
     else:
         st.error("Please upload an audio file.")
