@@ -6,3 +6,4 @@ python-dotenv
 streamlit-mic-recorder
 opencv-python
 numpy
+ffmpeg-python
