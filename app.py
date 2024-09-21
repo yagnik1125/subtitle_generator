@@ -21,7 +21,8 @@ st.title("Audio Translation App")
 
 # Audio file input
 uploaded_file = st.file_uploader("Upload an audio file", type=["mp3", "wav", "ogg", "flac", "m4a"])
-st.audio(uploaded_file, format="wav")
+if uploaded_file:
+    st.audio(uploaded_file, format="wav")
 mic_audio = mic_recorder(start_prompt="🎙️ Start Recording", stop_prompt="🎙️ Stop Recording", key='recorder')
 if mic_audio:
     st.write("mic audio through bytes")
