@@ -112,12 +112,46 @@ def translate_text(text, targ_lang):
         print(f"An error occurred: {str(e)}")
         return None
 
-def add_subtitles_to_video(input_video, subtitle_file, output_video):
-    # Use FFmpeg to add the subtitle to the video
-    command = [
-        'ffmpeg', '-y', '-i', input_video, '-vf', f"subtitles={subtitle_file}", output_video
-    ]
-    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# def add_subtitles_to_video(input_video, subtitle_file, output_video):
+#     # Use FFmpeg to add the subtitle to the video
+#     command = [
+#         'ffmpeg', '-y', '-i', input_video, '-vf', f"subtitles={subtitle_file}", output_video
+#     ]
+#     subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+def add_subtitles_to_video(input_video: str, subtitle_file: str, output_video: str, font_name: str = None):
+    """
+    Add subtitles to a video using FFmpeg with optional font support for specific languages.
+
+    Args:
+        input_video (str): Path to the input video file.
+        subtitle_file (str): Path to the subtitle file (.srt).
+        output_video (str): Path to save the output video file with subtitles.
+        font_name (str, optional): Font name to use for rendering subtitles. Default is None.
+    """
+    
+    # Base command for adding subtitles
+    command = ['ffmpeg', '-i', input_video]
+    
+    # Add the filter for subtitles with or without a specified font
+    if font_name:
+        # Use the specified font for subtitles rendering
+        command.extend(['-vf', f"subtitles={subtitle_file}:force_style='FontName={font_name}'"])
+    else:
+        # No custom font, just apply the subtitles
+        command.extend(['-vf', f"subtitles={subtitle_file}"])
+    
+    # Copy audio to avoid re-encoding
+    command.extend(['-c:a', 'copy', output_video])
+    
+    try:
+        # Execute the ffmpeg command
+        subprocess.run(command, check=True)
+        print(f"Subtitles added to {output_video} successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error occurred: {e}")
+
+
 
 selected_lang_tar = st.selectbox("Select the target language for translation", ['afrikaans', 'albanian', 'amharic', 'arabic', 'armenian', 'azerbaijani', 'basque', 'belarusian', 'bengali', 'bosnian', 'bulgarian', 'catalan', 'cebuano', 'chichewa', 'chinese (simplified)', 'chinese (traditional)', 'corsican', 'croatian', 'czech', 'danish', 'dutch', 'english', 'esperanto', 'estonian', 'filipino', 'finnish', 'french', 'frisian', 'galician', 'georgian', 'german', 'greek', 'gujarati', 'haitian creole', 'hausa', 'hawaiian', 'hebrew', 'hebrew', 'hindi', 'hmong', 'hungarian', 'icelandic', 'igbo', 'indonesian', 'irish', 'italian', 'japanese', 'javanese', 'kannada', 'kazakh', 'khmer', 'korean', 'kurdish (kurmanji)', 'kyrgyz', 'lao', 'latin', 'latvian', 'lithuanian', 'luxembourgish', 'macedonian', 'malagasy', 'malay', 'malayalam', 'maltese', 'maori', 'marathi', 'mongolian', 'myanmar (burmese)', 'nepali', 'norwegian', 'odia', 'pashto', 'persian', 'polish', 'portuguese', 'punjabi', 'romanian', 'russian', 'samoan', 'scots gaelic', 'serbian', 'sesotho', 'shona', 'sindhi', 'sinhala', 'slovak', 'slovenian', 'somali', 'spanish', 'sundanese', 'swahili', 'swedish', 'tajik', 'tamil', 'telugu', 'thai', 'turkish', 'ukrainian', 'urdu', 'uyghur', 'uzbek', 'vietnamese', 'welsh', 'xhosa', 'yiddish', 'yoruba', 'zulu'])
 
@@ -312,7 +346,8 @@ if st.button("Transcribe and Translate Audio"):
         write_vtt(transcription_segment, subtitle_file)
 
         output_video = "output_video_with_subtitles.mp4"
-        add_subtitles_to_video(vedio_file_name, subtitle_file, output_video)
+        add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, 'Noto Sans Devanagari')
+        # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video)
 
         st.video(output_video)
         # --------------------------subtitle end----------------------------------------------
