@@ -12,10 +12,12 @@ import subprocess
 import cv2
 import ffmpeg
 import copy
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+
+# https://pypi.org/project/streamlit-webrtc/
 
 # Initialize the Groq client
 client = Groq(api_key="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")
-
 
 # Streamlit frontend for audio input and translation
 st.title("Subtitle Generator App")

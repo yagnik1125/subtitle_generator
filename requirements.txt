@@ -7,3 +7,4 @@ streamlit-mic-recorder
 opencv-python
 numpy
 ffmpeg-python
+streamlit-webrtc
