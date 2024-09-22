@@ -13,7 +13,6 @@ import cv2
 import ffmpeg
 import copy
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-from streamlit_webrtc import WebRtcMode
 import logging
 import logging.handlers
 import queue
