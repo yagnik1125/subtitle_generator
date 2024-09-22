@@ -234,158 +234,323 @@ def get_font_for_language(language):
 
 selected_lang_tar = st.selectbox("Select the target language for translation", ['afrikaans', 'albanian', 'amharic', 'arabic', 'armenian', 'azerbaijani', 'basque', 'belarusian', 'bengali', 'bosnian', 'bulgarian', 'catalan', 'cebuano', 'chichewa', 'chinese (simplified)', 'chinese (traditional)', 'corsican', 'croatian', 'czech', 'danish', 'dutch', 'english', 'esperanto', 'estonian', 'filipino', 'finnish', 'french', 'frisian', 'galician', 'georgian', 'german', 'greek', 'gujarati', 'haitian creole', 'hausa', 'hawaiian', 'hebrew', 'hebrew', 'hindi', 'hmong', 'hungarian', 'icelandic', 'igbo', 'indonesian', 'irish', 'italian', 'japanese', 'javanese', 'kannada', 'kazakh', 'khmer', 'korean', 'kurdish (kurmanji)', 'kyrgyz', 'lao', 'latin', 'latvian', 'lithuanian', 'luxembourgish', 'macedonian', 'malagasy', 'malay', 'malayalam', 'maltese', 'maori', 'marathi', 'mongolian', 'myanmar (burmese)', 'nepali', 'norwegian', 'odia', 'pashto', 'persian', 'polish', 'portuguese', 'punjabi', 'romanian', 'russian', 'samoan', 'scots gaelic', 'serbian', 'sesotho', 'shona', 'sindhi', 'sinhala', 'slovak', 'slovenian', 'somali', 'spanish', 'sundanese', 'swahili', 'swedish', 'tajik', 'tamil', 'telugu', 'thai', 'turkish', 'ukrainian', 'urdu', 'uyghur', 'uzbek', 'vietnamese', 'welsh', 'xhosa', 'yiddish', 'yoruba', 'zulu'])
 
-# Button to trigger translation
-if st.button("Transcribe and Translate Audio"):
-    if uploaded_file is not None:
-        # Save the uploaded file to a temporary directory
-        with open("temp_audio_file", "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        audio_path = "temp_audio_file"
+col1, col2 = st.columns(2)
 
-        # Load the audio using pydub
-        audio = AudioSegment.from_file(audio_path)
-        audio = audio.set_channels(1)  # Ensure mono channel
-        audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
+with col1:
+    if st.button("Audio 2 Text for Uploaded Audio"):
+        # st.write("Processing uploaded file...")
+        if uploaded_file is not None:
+            # Save the uploaded file to a temporary directory
+            with open("temp_audio_file", "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            audio_path = "temp_audio_file"
 
-        # Split the audio into chunks (10 sec per chunk)
-        chunk_duration_ms = 10000  
-        chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
+            # Load the audio using pydub
+            audio = AudioSegment.from_file(audio_path)
+            audio = audio.set_channels(1)  # Ensure mono channel
+            audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
 
-        # Variables to store full transcription and translation
-        full_transcription = ""
-        full_translation = ""
+            # Split the audio into chunks (10 sec per chunk)
+            chunk_duration_ms = 10000  
+            chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
 
-        # # --------------------without chunk starts--------------------------------------------------
-        # filename = f"chunk.wav"
-        # audio.export(filename, format="wav")
-        # with open(filename, "rb") as file:
-        #     transcription = client.audio.transcriptions.create(
-        #         file=(filename, file.read()),  # Required audio file
-        #         model="whisper-large-v3",  # Required model for transcription
-        #         prompt="transcribe",
-        #         response_format="json",  # Optional
-        #         temperature=0.0  # Optional
-        #     )
-        # # Append the chunk transcription to full transcription
-        # transcription_text = transcription.text
-        # full_transcription += transcription_text + " "
-        # # --------------------without chunk ends--------------------------------------------------
+            # Variables to store full transcription and translation
+            full_transcription = ""
+            full_translation = ""
 
-        #----------------------------------chunk wise end----------------------------------------------------------
+            # # --------------------without chunk starts--------------------------------------------------
+            # filename = f"chunk.wav"
+            # audio.export(filename, format="wav")
+            # with open(filename, "rb") as file:
+            #     transcription = client.audio.transcriptions.create(
+            #         file=(filename, file.read()),  # Required audio file
+            #         model="whisper-large-v3",  # Required model for transcription
+            #         prompt="transcribe",
+            #         response_format="json",  # Optional
+            #         temperature=0.0  # Optional
+            #     )
+            # # Append the chunk transcription to full transcription
+            # transcription_text = transcription.text
+            # full_transcription += transcription_text + " "
+            # # --------------------without chunk ends--------------------------------------------------
 
-        # Process each chunk
-        for i, chunk in enumerate(chunks):
-            # Save the chunk to a temporary file
-            chunk_filename = f"chunk_{i}.wav"
-            chunk.export(chunk_filename, format="wav")
+            #----------------------------------chunk wise end----------------------------------------------------------
 
-            # Transcribe the chunk using Groq API
-            with open(chunk_filename, "rb") as file:
-                transcription = client.audio.transcriptions.create(
-                    file=(chunk_filename, file.read()),  # Required audio file
-                    model="whisper-large-v3",  # Required model for transcription
-                    prompt="Transcribe",
-                    response_format="json",  # Optional
-                    temperature=0.0  # Optional
-                )
-            # Append the chunk transcription to full transcription
-            chunk_transcription_text = transcription.text
-            full_transcription += chunk_transcription_text + " "
+            # Process each chunk
+            for i, chunk in enumerate(chunks):
+                # Save the chunk to a temporary file
+                chunk_filename = f"chunk_{i}.wav"
+                chunk.export(chunk_filename, format="wav")
 
-            # chunk_translation = lt.translate(transcription.text, source=selected_lang_src, target=selected_lang_tar)
-            chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
-            full_translation += chunk_translation + " "
+                # Transcribe the chunk using Groq API
+                with open(chunk_filename, "rb") as file:
+                    transcription = client.audio.transcriptions.create(
+                        file=(chunk_filename, file.read()),  # Required audio file
+                        model="whisper-large-v3",  # Required model for transcription
+                        prompt="Transcribe",
+                        response_format="json",  # Optional
+                        temperature=0.0  # Optional
+                    )
+                # Append the chunk transcription to full transcription
+                chunk_transcription_text = transcription.text
+                full_transcription += chunk_transcription_text + " "
 
-            # Show progress on the frontend
-            st.write(f"Processed chunk {i+1}/{len(chunks)}")
-            st.audio(chunk_filename, format="wav") 
-            st.write(f"Chunk Transcription: {chunk_transcription_text}")
-            st.write(f"Chunk Translation: {chunk_translation}")
+                # chunk_translation = lt.translate(transcription.text, source=selected_lang_src, target=selected_lang_tar)
+                chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
+                full_translation += chunk_translation + " "
 
-        #----------------------------------chunk wise end----------------------------------------------------------
+                # Show progress on the frontend
+                st.write(f"Processed chunk {i+1}/{len(chunks)}")
+                st.audio(chunk_filename, format="wav") 
+                st.write(f"Chunk Transcription: {chunk_transcription_text}")
+                st.write(f"Chunk Translation: {chunk_translation}")
 
-        # Show the final combined transcription and translation
-        st.write("Final Transcription:")
-        st.write(full_transcription)
+            #----------------------------------chunk wise end----------------------------------------------------------
 
-        st.write(f"Final Translatation:")
-        st.write(full_translation)
+            # Show the final combined transcription and translation
+            st.write("Final Transcription:")
+            st.write(full_transcription)
 
-    elif mic_audio is not None:
-        audio_file_like.seek(0)
-        buffer_data = audio_file_like.read()
-        # Save the uploaded file to a temporary directory
-        with open("temp_audio_file", "wb") as f:
-            f.write(buffer_data)
-        audio_path = "temp_audio_file"
+            st.write(f"Final Translatation:")
+            st.write(full_translation)
+        else:
+            st.error("Please upload an audio file.")
 
-        # Load the audio using pydub
-        audio = AudioSegment.from_file(audio_path)
-        audio = audio.set_channels(1)  # Ensure mono channel
-        audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
+with col2:
+    if st.button("Audio 2 Text for Mic recorded Audio"):
+        # st.write("Processing recorded audio...")
+        if mic_audio is not None:
+            audio_file_like.seek(0)
+            buffer_data = audio_file_like.read()
+            # Save the uploaded file to a temporary directory
+            with open("temp_audio_file", "wb") as f:
+                f.write(buffer_data)
+            audio_path = "temp_audio_file"
 
-        # Split the audio into chunks (10 sec per chunk)
-        chunk_duration_ms = 10000  
-        chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
+            # Load the audio using pydub
+            audio = AudioSegment.from_file(audio_path)
+            audio = audio.set_channels(1)  # Ensure mono channel
+            audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
 
-        # Variables to store full transcription and translation
-        full_transcription = ""
-        full_translation = ""
+            # Split the audio into chunks (10 sec per chunk)
+            chunk_duration_ms = 10000  
+            chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
 
-        # # --------------------without chunk starts--------------------------------------------------
-        # filename = f"chunk.wav"
-        # audio.export(filename, format="wav")
-        # with open(filename, "rb") as file:
-        #     transcription = client.audio.transcriptions.create(
-        #         file=(filename, file.read()),  # Required audio file
-        #         model="whisper-large-v3",  # Required model for transcription
-        #         prompt="transcribe",
-        #         response_format="json",  # Optional
-        #         temperature=0.0  # Optional
-        #     )
-        # # Append the chunk transcription to full transcription
-        # transcription_text = transcription.text
-        # full_transcription += transcription_text + " "
-        # # --------------------without chunk ends--------------------------------------------------
+            # Variables to store full transcription and translation
+            full_transcription = ""
+            full_translation = ""
 
-        #----------------------------------chunk wise end----------------------------------------------------------
+            # # --------------------without chunk starts--------------------------------------------------
+            # filename = f"chunk.wav"
+            # audio.export(filename, format="wav")
+            # with open(filename, "rb") as file:
+            #     transcription = client.audio.transcriptions.create(
+            #         file=(filename, file.read()),  # Required audio file
+            #         model="whisper-large-v3",  # Required model for transcription
+            #         prompt="transcribe",
+            #         response_format="json",  # Optional
+            #         temperature=0.0  # Optional
+            #     )
+            # # Append the chunk transcription to full transcription
+            # transcription_text = transcription.text
+            # full_transcription += transcription_text + " "
+            # # --------------------without chunk ends--------------------------------------------------
 
-        # Process each chunk
-        for i, chunk in enumerate(chunks):
-            # Save the chunk to a temporary file
-            chunk_filename = f"chunk_{i}.wav"
-            chunk.export(chunk_filename, format="wav")
+            #----------------------------------chunk wise end----------------------------------------------------------
 
-            # Transcribe the chunk using Groq API
-            with open(chunk_filename, "rb") as file:
-                transcription = client.audio.transcriptions.create(
-                    file=(chunk_filename, file.read()),  # Required audio file
-                    model="whisper-large-v3",  # Required model for transcription
-                    prompt="Transcribe",
-                    response_format="json",  # Optional
-                    temperature=0.0  # Optional
-                )
-            # Append the chunk transcription to full transcription
-            chunk_transcription_text = transcription.text
-            full_transcription += chunk_transcription_text + " "
+            # Process each chunk
+            for i, chunk in enumerate(chunks):
+                # Save the chunk to a temporary file
+                chunk_filename = f"chunk_{i}.wav"
+                chunk.export(chunk_filename, format="wav")
 
-            # chunk_translation = lt.translate(transcription.text, source=selected_lang_src, target=selected_lang_tar)
-            chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
-            full_translation += chunk_translation + " "
+                # Transcribe the chunk using Groq API
+                with open(chunk_filename, "rb") as file:
+                    transcription = client.audio.transcriptions.create(
+                        file=(chunk_filename, file.read()),  # Required audio file
+                        model="whisper-large-v3",  # Required model for transcription
+                        prompt="Transcribe",
+                        response_format="json",  # Optional
+                        temperature=0.0  # Optional
+                    )
+                # Append the chunk transcription to full transcription
+                chunk_transcription_text = transcription.text
+                full_transcription += chunk_transcription_text + " "
 
-            # Show progress on the frontend
-            st.write(f"Processed chunk {i+1}/{len(chunks)}")
-            st.audio(chunk_filename, format="wav") 
-            st.write(f"Chunk Transcription: {chunk_transcription_text}")
-            st.write(f"Chunk Translation: {chunk_translation}")
+                # chunk_translation = lt.translate(transcription.text, source=selected_lang_src, target=selected_lang_tar)
+                chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
+                full_translation += chunk_translation + " "
 
-        #----------------------------------chunk wise end----------------------------------------------------------
+                # Show progress on the frontend
+                st.write(f"Processed chunk {i+1}/{len(chunks)}")
+                st.audio(chunk_filename, format="wav") 
+                st.write(f"Chunk Transcription: {chunk_transcription_text}")
+                st.write(f"Chunk Translation: {chunk_translation}")
 
-        # Show the final combined transcription and translation
-        st.write("Final Transcription:")
-        st.write(full_transcription)
+            #----------------------------------chunk wise end----------------------------------------------------------
 
-        st.write(f"Final Translation:")
-        st.write(full_translation)
-    else:
-        st.error("Please upload an audio file.")
+            # Show the final combined transcription and translation
+            st.write("Final Transcription:")
+            st.write(full_transcription)
+
+            st.write(f"Final Translation:")
+            st.write(full_translation)
+        else:
+            st.error("Please upload an audio file.")
+
+
+# # Button to trigger translation
+# if st.button("Transcribe and Translate Audio"):
+#     if uploaded_file is not None:
+#         # Save the uploaded file to a temporary directory
+#         with open("temp_audio_file", "wb") as f:
+#             f.write(uploaded_file.getbuffer())
+#         audio_path = "temp_audio_file"
+
+#         # Load the audio using pydub
+#         audio = AudioSegment.from_file(audio_path)
+#         audio = audio.set_channels(1)  # Ensure mono channel
+#         audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
+
+#         # Split the audio into chunks (10 sec per chunk)
+#         chunk_duration_ms = 10000  
+#         chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
+
+#         # Variables to store full transcription and translation
+#         full_transcription = ""
+#         full_translation = ""
+
+#         # # --------------------without chunk starts--------------------------------------------------
+#         # filename = f"chunk.wav"
+#         # audio.export(filename, format="wav")
+#         # with open(filename, "rb") as file:
+#         #     transcription = client.audio.transcriptions.create(
+#         #         file=(filename, file.read()),  # Required audio file
+#         #         model="whisper-large-v3",  # Required model for transcription
+#         #         prompt="transcribe",
+#         #         response_format="json",  # Optional
+#         #         temperature=0.0  # Optional
+#         #     )
+#         # # Append the chunk transcription to full transcription
+#         # transcription_text = transcription.text
+#         # full_transcription += transcription_text + " "
+#         # # --------------------without chunk ends--------------------------------------------------
+
+#         #----------------------------------chunk wise end----------------------------------------------------------
+
+#         # Process each chunk
+#         for i, chunk in enumerate(chunks):
+#             # Save the chunk to a temporary file
+#             chunk_filename = f"chunk_{i}.wav"
+#             chunk.export(chunk_filename, format="wav")
+
+#             # Transcribe the chunk using Groq API
+#             with open(chunk_filename, "rb") as file:
+#                 transcription = client.audio.transcriptions.create(
+#                     file=(chunk_filename, file.read()),  # Required audio file
+#                     model="whisper-large-v3",  # Required model for transcription
+#                     prompt="Transcribe",
+#                     response_format="json",  # Optional
+#                     temperature=0.0  # Optional
+#                 )
+#             # Append the chunk transcription to full transcription
+#             chunk_transcription_text = transcription.text
+#             full_transcription += chunk_transcription_text + " "
+
+#             # chunk_translation = lt.translate(transcription.text, source=selected_lang_src, target=selected_lang_tar)
+#             chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
+#             full_translation += chunk_translation + " "
+
+#             # Show progress on the frontend
+#             st.write(f"Processed chunk {i+1}/{len(chunks)}")
+#             st.audio(chunk_filename, format="wav") 
+#             st.write(f"Chunk Transcription: {chunk_transcription_text}")
+#             st.write(f"Chunk Translation: {chunk_translation}")
+
+#         #----------------------------------chunk wise end----------------------------------------------------------
+
+#         # Show the final combined transcription and translation
+#         st.write("Final Transcription:")
+#         st.write(full_transcription)
+
+#         st.write(f"Final Translatation:")
+#         st.write(full_translation)
+
+#     elif mic_audio is not None:
+#         audio_file_like.seek(0)
+#         buffer_data = audio_file_like.read()
+#         # Save the uploaded file to a temporary directory
+#         with open("temp_audio_file", "wb") as f:
+#             f.write(buffer_data)
+#         audio_path = "temp_audio_file"
+
+#         # Load the audio using pydub
+#         audio = AudioSegment.from_file(audio_path)
+#         audio = audio.set_channels(1)  # Ensure mono channel
+#         audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
+
+#         # Split the audio into chunks (10 sec per chunk)
+#         chunk_duration_ms = 10000  
+#         chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
+
+#         # Variables to store full transcription and translation
+#         full_transcription = ""
+#         full_translation = ""
+
+#         # # --------------------without chunk starts--------------------------------------------------
+#         # filename = f"chunk.wav"
+#         # audio.export(filename, format="wav")
+#         # with open(filename, "rb") as file:
+#         #     transcription = client.audio.transcriptions.create(
+#         #         file=(filename, file.read()),  # Required audio file
+#         #         model="whisper-large-v3",  # Required model for transcription
+#         #         prompt="transcribe",
+#         #         response_format="json",  # Optional
+#         #         temperature=0.0  # Optional
+#         #     )
+#         # # Append the chunk transcription to full transcription
+#         # transcription_text = transcription.text
+#         # full_transcription += transcription_text + " "
+#         # # --------------------without chunk ends--------------------------------------------------
+
+#         #----------------------------------chunk wise end----------------------------------------------------------
+
+#         # Process each chunk
+#         for i, chunk in enumerate(chunks):
+#             # Save the chunk to a temporary file
+#             chunk_filename = f"chunk_{i}.wav"
+#             chunk.export(chunk_filename, format="wav")
+
+#             # Transcribe the chunk using Groq API
+#             with open(chunk_filename, "rb") as file:
+#                 transcription = client.audio.transcriptions.create(
+#                     file=(chunk_filename, file.read()),  # Required audio file
+#                     model="whisper-large-v3",  # Required model for transcription
+#                     prompt="Transcribe",
+#                     response_format="json",  # Optional
+#                     temperature=0.0  # Optional
+#                 )
+#             # Append the chunk transcription to full transcription
+#             chunk_transcription_text = transcription.text
+#             full_transcription += chunk_transcription_text + " "
+
+#             # chunk_translation = lt.translate(transcription.text, source=selected_lang_src, target=selected_lang_tar)
+#             chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
+#             full_translation += chunk_translation + " "
+
+#             # Show progress on the frontend
+#             st.write(f"Processed chunk {i+1}/{len(chunks)}")
+#             st.audio(chunk_filename, format="wav") 
+#             st.write(f"Chunk Transcription: {chunk_transcription_text}")
+#             st.write(f"Chunk Translation: {chunk_translation}")
+
+#         #----------------------------------chunk wise end----------------------------------------------------------
+
+#         # Show the final combined transcription and translation
+#         st.write("Final Transcription:")
+#         st.write(full_transcription)
+
+#         st.write(f"Final Translation:")
+#         st.write(full_translation)
+#     else:
+#         st.error("Please upload an audio file.")
