@@ -12,21 +12,20 @@ import subprocess
 import cv2
 import ffmpeg
 import copy
-from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
 # https://pypi.org/project/streamlit-webrtc/
 
 # Initialize the Groq client
 client = Groq(api_key="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")
 
-class VideoProcessor(VideoProcessorBase):
+# Define a class to handle video streaming
+class VideoTransformer(VideoTransformerBase):
     def __init__(self):
         self.frames = []
-        self.recording = False  # Track recording state
-
-    def recv(self, frame):
-        if self.recording:
-            self.frames.append(frame.to_ndarray())
+    
+    def transform(self, frame):
+        self.frames.append(frame)
         return frame
 
 # Streamlit frontend for audio input and translation
@@ -67,13 +66,9 @@ def save_video_from_frames(frames, output_file):
 
         out.release()
 
-processor = VideoProcessor()
-processor.recording = True
-webrtc_streamer(key="video_capture", video_processor_factory=lambda: processor)
-processor.recording = False
-video_frames = processor.frames
-# webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
-#                     video_frame_callback=VideoTransformer.transform)
+
+webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
+                    video_frame_callback=VideoTransformer.transform)
 
 # # Button to toggle recording
 # if 'recording' not in st.session_state:
