@@ -27,6 +27,9 @@ import numpy as np
 from twilio.rest import Client
 
 # https://pypi.org/project/streamlit-webrtc/
+# https://github.com/whitphx/streamlit-stt-app/tree/main
+# https://whitphx-streamlit-stt-app-app-deepspeech-m6tt1k.streamlit.app/
+# https://console.twilio.com/
 # mu6WZ4JWsPctRztBUV16nApe2NQ6AwXH   --->secret key
 # account_sid = os.environ["ACe79864f19c78b628906f478fee8cce5e"]
 # auth_token = os.environ["0387f33bc7ea64e613896df0ba3b39ba"]
