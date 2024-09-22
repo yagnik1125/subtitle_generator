@@ -19,6 +19,15 @@ from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 # Initialize the Groq client
 client = Groq(api_key="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")
 
+# Define a class to handle video streaming
+class VideoTransformer(VideoTransformerBase):
+    def __init__(self):
+        self.frames = []
+    
+    def transform(self, frame):
+        self.frames.append(frame)
+        return frame
+
 # Streamlit frontend for audio input and translation
 st.title("Subtitle Generator App")
 
@@ -43,6 +52,50 @@ if uploaded_vedio_file is not None:
     # st.video(uploaded_vedio_file)
     video_capture.release()
     # os.remove(tfile.name)
+
+
+# Function to save video from frames
+def save_video_from_frames(frames, output_file):
+    if frames:
+        height, width, _ = frames[0].shape
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(output_file, fourcc, 30.0, (width, height))
+
+        for frame in frames:
+            out.write(frame)
+
+        out.release()
+
+# Button to toggle recording
+if 'recording' not in st.session_state:
+    st.session_state.recording = False
+
+toggle_button = st.button("🎥 Start/Stop Recording", key='toggle_recording')
+
+# Handle button state
+if toggle_button:
+    st.session_state.recording = not st.session_state.recording
+
+# Start or stop webcam based on button state
+if st.session_state.recording:
+    webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
+                    video_frame_callback=VideoTransformer.transform)
+    st.write("Recording...")
+else:
+    transformer = VideoTransformer()
+    video_frames = transformer.frames
+    if video_frames:
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+        save_video_from_frames(video_frames, temp_file.name)
+        st.video(temp_file.name)
+        # st.success("Video recorded successfully!")
+        
+        # # Call your subtitle generation function here
+        # generate_subtitles(temp_file.name)  # Process the recorded video
+    else:
+        st.warning("No frames recorded.")
+
+
 
 def get_audio_buffer(audio_file):
     with open(audio_file, "rb") as f:
