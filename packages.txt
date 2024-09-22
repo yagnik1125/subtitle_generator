@@ -17,10 +17,10 @@ fonts-arphic-ukai
 fonts-arphic-uming
 fonts-ipafont-mincho
 fonts-kacst
-fonts-lohit-bengali
-fonts-lohit-gujarati
-fonts-lohit-tamil
-fonts-lohit-telugu
 fonts-nanum
 fonts-takao
 fonts-thai-tlwg
+
+libsm6
+libxext6
+libxrender1
