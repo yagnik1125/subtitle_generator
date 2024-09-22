@@ -8,3 +8,5 @@ opencv-python
 numpy
 ffmpeg-python
 streamlit-webrtc
+av
+twilio

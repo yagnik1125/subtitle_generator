@@ -13,8 +13,23 @@ import cv2
 import ffmpeg
 import copy
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+import logging
+import logging.handlers
+import queue
+import threading
+import time
+import urllib.request
+from collections import deque
+from pathlib import Path
+from typing import List
+import av
+import numpy as np
+from twilio.rest import Client
 
 # https://pypi.org/project/streamlit-webrtc/
+# mu6WZ4JWsPctRztBUV16nApe2NQ6AwXH   --->secret key
+# account_sid = os.environ["ACe79864f19c78b628906f478fee8cce5e"]
+# auth_token = os.environ["0387f33bc7ea64e613896df0ba3b39ba"]
 
 # Initialize the Groq client
 client = Groq(api_key="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")
