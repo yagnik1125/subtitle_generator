@@ -13,18 +13,18 @@ import cv2
 import ffmpeg
 import copy
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
-import logging
-import logging.handlers
-import queue
-import threading
-import time
-import urllib.request
-from collections import deque
-from pathlib import Path
-from typing import List
-import av
-import numpy as np
-from twilio.rest import Client
+# import logging
+# import logging.handlers
+# import queue
+# import threading
+# import time
+# import urllib.request
+# from collections import deque
+# from pathlib import Path
+# from typing import List
+# import av
+# import numpy as np
+# from twilio.rest import Client
 
 # https://pypi.org/project/streamlit-webrtc/
 # mu6WZ4JWsPctRztBUV16nApe2NQ6AwXH   --->secret key
@@ -84,35 +84,6 @@ def save_video_from_frames(frames, output_file):
 
 webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
                     video_frame_callback=VideoTransformer.transform)
-
-# # Button to toggle recording
-# if 'recording' not in st.session_state:
-#     st.session_state.recording = False
-
-# toggle_button = st.button("🎥 Start/Stop Recording", key='toggle_recording')
-
-# # Handle button state
-# if toggle_button:
-#     st.session_state.recording = not st.session_state.recording
-
-# # Start or stop webcam based on button state
-# if st.session_state.recording:
-#     webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
-#                     video_frame_callback=VideoTransformer.transform)
-#     st.write("Recording...")
-# else:
-#     transformer = VideoTransformer()
-#     video_frames = transformer.frames
-#     if video_frames:
-#         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
-#         save_video_from_frames(video_frames, temp_file.name)
-#         st.video(temp_file.name)
-#         # st.success("Video recorded successfully!")
-        
-#         # # Call your subtitle generation function here
-#         # generate_subtitles(temp_file.name)  # Process the recorded video
-#     else:
-#         st.warning("No frames recorded.")
 
 
 
