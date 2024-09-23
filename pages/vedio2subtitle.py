@@ -37,14 +37,14 @@ from twilio.rest import Client
 # Initialize the Groq client
 client = Groq(api_key="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")
 
-# Define a class to handle video streaming
-class VideoTransformer(VideoTransformerBase):
-    def __init__(self):
-        self.frames = []
+# # Define a class to handle video streaming
+# class VideoTransformer(VideoTransformerBase):
+#     def __init__(self):
+#         self.frames = []
     
-    def transform(self, frame):
-        self.frames.append(frame)
-        return frame
+#     def transform(self, frame):
+#         self.frames.append(frame)
+#         return frame
 
 # Streamlit frontend for audio input and translation
 st.title("Subtitle Generator App")
@@ -72,17 +72,17 @@ if uploaded_vedio_file is not None:
     # os.remove(tfile.name)
 
 
-# Function to save video from frames
-def save_video_from_frames(frames, output_file):
-    if frames:
-        height, width, _ = frames[0].shape
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        out = cv2.VideoWriter(output_file, fourcc, 30.0, (width, height))
+# # Function to save video from frames
+# def save_video_from_frames(frames, output_file):
+#     if frames:
+#         height, width, _ = frames[0].shape
+#         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+#         out = cv2.VideoWriter(output_file, fourcc, 30.0, (width, height))
 
-        for frame in frames:
-            out.write(frame)
+#         for frame in frames:
+#             out.write(frame)
 
-        out.release()
+#         out.release()
 
 
 # webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
