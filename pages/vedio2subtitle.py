@@ -85,8 +85,8 @@ def save_video_from_frames(frames, output_file):
         out.release()
 
 
-webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
-                    video_frame_callback=VideoTransformer.transform)
+# webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
+#                     video_frame_callback=VideoTransformer.transform)
 
 
 
