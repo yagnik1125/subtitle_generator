@@ -77,16 +77,17 @@ if uploaded_vedio_file is not None:
 youtube_link = st.text_input("Enter YouTube Video Link")
 
 # Download and process YouTube video if the link is provided
+youtube_vedio_file_name=""
 if youtube_link:
     try:
         yt = YouTube(youtube_link)
-        video_stream = yt.streams.filter(progressive=True, file_extension="mp4").first()
-        temp_video_path = os.path.join(tempfile.gettempdir(), yt.title + ".mp4")
-        video_stream.download(output_path=tempfile.gettempdir(), filename=yt.title + ".mp4")
-        vedio_file_name = temp_video_path
-        st.write(f"Video downloaded and saved at: {vedio_file_name}")
+        video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
+        video.download('temp_video.mp4')
+        youtube_vedio_file_name = 'temp_video.mp4'
+        st.write(f"Video downloaded and saved as: {youtube_vedio_file_name}")
     except Exception as e:
         st.error(f"Failed to download YouTube video. Error: {str(e)}")
+
 
 # # Function to save video from frames
 # def save_video_from_frames(frames, output_file):
@@ -94,13 +95,9 @@ if youtube_link:
 #         height, width, _ = frames[0].shape
 #         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 #         out = cv2.VideoWriter(output_file, fourcc, 30.0, (width, height))
-
 #         for frame in frames:
 #             out.write(frame)
-
 #         out.release()
-
-
 # webrtc_streamer(key="video_capture", video_transformer_factory=VideoTransformer, 
 #                     video_frame_callback=VideoTransformer.transform)
 
@@ -407,42 +404,43 @@ if st.button("Generate Subtitle"):
         st.error("Please upload an audio file.")
 
 if st.button("Generate Youtube Vedio Subtitle"):
-    if vedio_file_name:
-        audio_file = video2mp3(vedio_file_name)
-        audio_buffer = get_audio_buffer(audio_file)
-        audio = AudioSegment.from_file(audio_buffer)
-        audio = audio.set_channels(1)
-        audio = audio.set_frame_rate(16000)
+    if youtube_vedio_file_name:
+        st.video(youtube_vedio_file_name)
+        # audio_file = video2mp3(youtube_vedio_file_name)
+        # audio_buffer = get_audio_buffer(audio_file)
+        # audio = AudioSegment.from_file(audio_buffer)
+        # audio = audio.set_channels(1)
+        # audio = audio.set_frame_rate(16000)
 
-        chunk_duration_ms = 3000  
-        chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
+        # chunk_duration_ms = 3000  
+        # chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
 
-        full_transcription = ""
-        full_translation = ""
+        # full_transcription = ""
+        # full_translation = ""
 
-        filename = f"chunk.wav"
-        audio.export(filename, format="wav")
-        with open(filename, "rb") as file:
-            transcription = client.audio.transcriptions.create(
-                file=(filename, file.read()),
-                model="whisper-large-v3",
-                prompt="transcribe",
-                response_format="verbose_json",
-                temperature=0.0
-            )
-        transcription_segment = transcription.segments
-        translation_segment = copy.deepcopy(transcription_segment)
+        # filename = f"chunk.wav"
+        # audio.export(filename, format="wav")
+        # with open(filename, "rb") as file:
+        #     transcription = client.audio.transcriptions.create(
+        #         file=(filename, file.read()),
+        #         model="whisper-large-v3",
+        #         prompt="transcribe",
+        #         response_format="verbose_json",
+        #         temperature=0.0
+        #     )
+        # transcription_segment = transcription.segments
+        # translation_segment = copy.deepcopy(transcription_segment)
         
-        for seg in translation_segment:
-            seg['text'] = translate_text(seg['text'], selected_lang_tar)
+        # for seg in translation_segment:
+        #     seg['text'] = translate_text(seg['text'], selected_lang_tar)
 
-        subtitle_file = "output_subtitle.vtt"
-        write_vtt(translation_segment, subtitle_file)
+        # subtitle_file = "output_subtitle.vtt"
+        # write_vtt(translation_segment, subtitle_file)
 
-        output_video = "output_video_with_subtitles.mp4"
-        add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, get_font_for_language(selected_lang_tar))
+        # output_video = "output_video_with_subtitles.mp4"
+        # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, get_font_for_language(selected_lang_tar))
 
-        st.video(output_video)
+        # st.video(output_video)
 
     else:
         st.error("Please upload a video file or provide a YouTube link.")
