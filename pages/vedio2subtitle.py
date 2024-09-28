@@ -70,22 +70,29 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
         output_path = os.getcwd()
 
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp4',#aaya pela mp3 hatu etle vedio noto aavto
-            'preferredquality': '192',
-        }],
+        # 'format': 'bestaudio/best',
+        # 'postprocessors': [{
+        #     'key': 'FFmpegExtractAudio',
+        #     'preferredcodec': 'mp3',#aaya pela mp3 hatu etle vedio noto aavto
+        #     'preferredquality': '192',
+        # }],
+        # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',  # Download best video and audio, merge into mp4
         'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+        'postprocessors': [{
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': 'mp4',  # Ensure output is in mp4 format
+        }],
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             result = ydl.extract_info(yt_url, download=True)
             file_name = ydl.prepare_filename(result)
-            mp3_file_path = file_name.rsplit('.', 1)[0] + '.mp3'
-            st.info(f"yt_dlp_download saved YouTube video to file path: {mp3_file_path}")
-            return mp3_file_path
+            mp4_file_path = file_name.rsplit('.', 1)[0] + '.mp3'
+            st.info(f"yt_dlp_download saved YouTube video to file path: {mp4_file_path}")
+            return mp4_file_path
     except yt_dlp.utils.DownloadError as e:
         st.error(f"yt_dlp_download failed to download audio from URL {yt_url}: {e}")
         # raise
@@ -354,7 +361,7 @@ if uploaded_vedio_file is not None:
 youtube_link = st.text_input("Enter YouTube Video Link")
 
 # Download and process YouTube video if the link is provided
-youtube_video_file_name=""
+youtube_video_file_path=""
 if youtube_link:
     youtube_url_pattern = r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$'
     if not re.match(youtube_url_pattern, youtube_link):
@@ -365,12 +372,12 @@ if youtube_link:
 
     
     try:
-        youtube_video_file_name = yt_dlp_download(youtube_link)
+        youtube_video_file_path = yt_dlp_download(youtube_link)
     except Exception as e:
         st.error(f"generate_youtube_transcript_with_groq failed to download YouTube video from URL {youtube_link}: {e}")
         st.error(traceback.format_exc())
 
-    st.video(youtube_video_file_name)
+    st.video(youtube_video_file_path)
     # chunk_size=5*60000
     # temp_dir = "temp_chunks"
     # chunk_files=[]
