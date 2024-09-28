@@ -70,32 +70,29 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
         output_path = os.getcwd()
 
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',#aaya pela mp3 hatu etle vedio noto aavto
-            'preferredquality': '192',
-        }],
-        'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
-
-        # 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',  # Download best video and audio, merge into mp4
-        # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+        # 'format': 'bestaudio/best',
         # 'postprocessors': [{
-        #     'key': 'FFmpegVideoConvertor',
-        #     'preferedformat': 'mp4',  # Ensure output is in mp4 format
+        #     'key': 'FFmpegExtractAudio',
+        #     'preferredcodec': 'mp3',#aaya pela mp3 hatu etle vedio noto aavto
+        #     'preferredquality': '192',
         # }],
+        # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
 
-        # 'format': 'bestvideo+bestaudio/best',  # Download the best video and audio available
-        # 'merge_output_format': 'mp4',  # Ensure video and audio are merged in mp4 format
-        # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),  # Output template
+        'format': 'bestvideo+bestaudio/best',  # Get the best video and audio
+        'merge_output_format': 'mp4',  # Ensure the output is merged into mp4
+        'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),  # Set output filename template
+        'postprocessors': [{
+            'key': 'FFmpegVideoConvertor',
+            'preferedformat': 'mp4',  # Convert to mp4 if needed
+        }],
     }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             result = ydl.extract_info(yt_url, download=True)
             file_name = ydl.prepare_filename(result)
-            mp4_file_path = file_name.rsplit('.', 1)[0] + '.mp3'
-            st.info(f"yt_dlp_download saved YouTube video to file path: {mp4_file_path}")
+            mp4_file_path = file_name.rsplit('.', 1)[0] + '.mp4'
+            # st.info(f"yt_dlp_download saved YouTube video to file path: {mp4_file_path}")
             return mp4_file_path
     except yt_dlp.utils.DownloadError as e:
         st.error(f"yt_dlp_download failed to download audio from URL {yt_url}: {e}")
@@ -368,11 +365,12 @@ youtube_link = st.text_input("Enter YouTube Video Link")
 youtube_video_file_path=""
 if youtube_link:
     youtube_url_pattern = r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$'
+    # st.write("Youtube video links: ",youtube_link)
     if not re.match(youtube_url_pattern, youtube_link):
         st.error(f"Invalid YouTube URL: {youtube_link}")
         # raise ValueError("Invalid YouTube URL provided.")
-    else:
-        st.write("Link OK")
+    # else:
+    #     st.write("Link OK")
 
     
     try:
@@ -422,7 +420,6 @@ if youtube_link:
     #         st.error(error_message)
     #         st.error(traceback.format_exc())
     #         # raise error_message
-    st.write("Youtube video links: ",youtube_link)
 
 
 selected_lang_tar = st.selectbox("Select the Target language for Subtitle", ['afrikaans', 'albanian', 'amharic', 'arabic', 'armenian', 'azerbaijani', 'basque', 'belarusian', 'bengali', 'bosnian', 'bulgarian', 'catalan', 'cebuano', 'chichewa', 'chinese (simplified)', 'chinese (traditional)', 'corsican', 'croatian', 'czech', 'danish', 'dutch', 'english', 'esperanto', 'estonian', 'filipino', 'finnish', 'french', 'frisian', 'galician', 'georgian', 'german', 'greek', 'gujarati', 'haitian creole', 'hausa', 'hawaiian', 'hebrew', 'hebrew', 'hindi', 'hmong', 'hungarian', 'icelandic', 'igbo', 'indonesian', 'irish', 'italian', 'japanese', 'javanese', 'kannada', 'kazakh', 'khmer', 'korean', 'kurdish (kurmanji)', 'kyrgyz', 'lao', 'latin', 'latvian', 'lithuanian', 'luxembourgish', 'macedonian', 'malagasy', 'malay', 'malayalam', 'maltese', 'maori', 'marathi', 'mongolian', 'myanmar (burmese)', 'nepali', 'norwegian', 'odia', 'pashto', 'persian', 'polish', 'portuguese', 'punjabi', 'romanian', 'russian', 'samoan', 'scots gaelic', 'serbian', 'sesotho', 'shona', 'sindhi', 'sinhala', 'slovak', 'slovenian', 'somali', 'spanish', 'sundanese', 'swahili', 'swedish', 'tajik', 'tamil', 'telugu', 'thai', 'turkish', 'ukrainian', 'urdu', 'uyghur', 'uzbek', 'vietnamese', 'welsh', 'xhosa', 'yiddish', 'yoruba', 'zulu'])
