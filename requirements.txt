@@ -11,3 +11,4 @@ streamlit-webrtc
 av
 twilio
 pytube
+yt-dlp
