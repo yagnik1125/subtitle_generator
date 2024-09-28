@@ -94,6 +94,57 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
         st.error(traceback.format_exc())
         # raise
 
+def create_audio_chunks(audio_file: str, chunk_size: int, temp_dir: str) -> List[str]:
+    """
+    Splits an audio file into smaller segments or chunks based on a specified duration. This function is useful for processing large audio files incrementally or in parallel, which can be beneficial for tasks such as audio analysis or transcription where handling smaller segments might be more manageable.
+    AudioSegment can slice an audio file by specifying the start and end times in milliseconds. This allows you to extract precise segments of the audio without needing to process the entire file at once. For example, `audio[1000:2000]` extracts a segment from the 1-second mark to the 2-second mark of the audio file.
+    Args:
+        audio_file (str): The absolute or relative path to the audio file that needs to be chunked. This file should be accessible and readable.
+        
+        chunk_size (int): The length of each audio chunk expressed in milliseconds. This value determines how the audio file will be divided. For example, a `chunk_size` of 1000 milliseconds will split the audio into chunks of 1 second each.
+        
+        temp_dir (str): The directory where the temporary audio chunk files will be stored. This directory will be used to save the output chunk files, and it must have write permissions. If the directory does not exist, it will be created.
+    Returns:
+        List[str]: A list containing the file paths of all the audio chunks created. Each path in the list represents a single chunk file stored in the specified `temp_dir`. The files are named sequentially based on their order in the original audio file.
+    Raises:
+        FileNotFoundError: If the `audio_file` does not exist or is inaccessible.
+        
+        PermissionError: If the script lacks the necessary permissions to read the `audio_file` or write to the `temp_dir`.
+        ValueError: If `chunk_size` is set to a non-positive value.
+    """
+    os.makedirs(temp_dir, exist_ok=True)
+    file_name = os.path.splitext(os.path.basename(audio_file))[0]
+
+    try:
+        audio = AudioSegment.from_file(audio_file)
+    except Exception as e:
+        st.error(f"create_audio_chunks failed to load audio file {audio_file}: {e}")
+        st.error(traceback.format_exc())
+        return []
+
+    start = 0
+    end = chunk_size
+    counter = 0
+    chunk_files = []
+
+
+
+    while start < len(audio):
+        chunk = audio[start:end]
+        chunk_file_path = os.path.join(temp_dir, f"{counter}_{file_name}.mp3")
+        try:
+            chunk.export(chunk_file_path, format="mp3") # Using .mp3 because it's cheaper
+            chunk_files.append(chunk_file_path)
+        except Exception as e:
+            error_message = f"create_audio_chunks failed to export chunk {counter}: {e}"
+            st.error(error_message)
+            st.error(traceback.format_exc())
+            # raise error_message
+        start += chunk_size
+        end += chunk_size
+        counter += 1
+    return chunk_files
+
 
 
 def get_audio_buffer(audio_file):
@@ -314,12 +365,52 @@ if youtube_link:
 
     
     try:
-        file_path = yt_dlp_download(youtube_link)
+        youtube_vedio_file_name = yt_dlp_download(youtube_link)
     except Exception as e:
         st.error(f"generate_youtube_transcript_with_groq failed to download YouTube video from URL {youtube_link}: {e}")
         st.error(traceback.format_exc())
 
-    # st.write("Youtube Vedio links: ",youtube_link)
+    st.vedio(youtube_vedio_file_name)
+    # chunk_size=5*60000
+    # temp_dir = "temp_chunks"
+    # chunk_files=[]
+    # try:
+    #     chunk_files = create_audio_chunks(file_path, chunk_size, temp_dir)
+    # except Exception as e:
+    #     error_message = f"generate_youtube_transcript_with_groq failed to create audio chunks from file {file_path}: {e}"
+    #     st.error(error_message)
+    #     st.error(traceback.format_exc())
+    #     # raise error_message
+
+    # transcripts = []
+    # translations = []
+    # for file_name in chunk_files:
+    #     try:
+    #         st.info(f"Transcribing {file_name}")
+    #         filename = f"chunk.wav"
+    #         file_name.export(filename, format="wav")
+    #         with open(filename, "rb") as file:
+    #             transcription = client.audio.transcriptions.create(
+    #                 file=(filename, file.read()),  # Required audio file
+    #                 model="whisper-large-v3",  # Required model for transcription
+    #                 prompt="transcribe",
+    #                 response_format="verbose_json",  # Optional
+    #                 temperature=0.0  # Optional
+    #             )
+    #         # Append the chunk transcription to full transcription
+    #         transcription_segment=transcription.segments
+    #         translation_segment=copy.deepcopy(transcription_segment)
+    #         # transcript = transcribe_with_groq(file_name)
+    #         # transcripts.append(transcript)
+    #         # translation = translate_with_groq(transcript, "English")
+    #         # translations.append(translation)
+            
+    #     except Exception as e:
+    #         error_message = f"generate_youtube_transcript_with_groq failed to transcribe file {file_name}: {e}"
+    #         st.error(error_message)
+    #         st.error(traceback.format_exc())
+    #         # raise error_message
+    st.write("Youtube Vedio links: ",youtube_link)
 
 
 selected_lang_tar = st.selectbox("Select the Target language for Subtitle", ['afrikaans', 'albanian', 'amharic', 'arabic', 'armenian', 'azerbaijani', 'basque', 'belarusian', 'bengali', 'bosnian', 'bulgarian', 'catalan', 'cebuano', 'chichewa', 'chinese (simplified)', 'chinese (traditional)', 'corsican', 'croatian', 'czech', 'danish', 'dutch', 'english', 'esperanto', 'estonian', 'filipino', 'finnish', 'french', 'frisian', 'galician', 'georgian', 'german', 'greek', 'gujarati', 'haitian creole', 'hausa', 'hawaiian', 'hebrew', 'hebrew', 'hindi', 'hmong', 'hungarian', 'icelandic', 'igbo', 'indonesian', 'irish', 'italian', 'japanese', 'javanese', 'kannada', 'kazakh', 'khmer', 'korean', 'kurdish (kurmanji)', 'kyrgyz', 'lao', 'latin', 'latvian', 'lithuanian', 'luxembourgish', 'macedonian', 'malagasy', 'malay', 'malayalam', 'maltese', 'maori', 'marathi', 'mongolian', 'myanmar (burmese)', 'nepali', 'norwegian', 'odia', 'pashto', 'persian', 'polish', 'portuguese', 'punjabi', 'romanian', 'russian', 'samoan', 'scots gaelic', 'serbian', 'sesotho', 'shona', 'sindhi', 'sinhala', 'slovak', 'slovenian', 'somali', 'spanish', 'sundanese', 'swahili', 'swedish', 'tajik', 'tamil', 'telugu', 'thai', 'turkish', 'ukrainian', 'urdu', 'uyghur', 'uzbek', 'vietnamese', 'welsh', 'xhosa', 'yiddish', 'yoruba', 'zulu'])
