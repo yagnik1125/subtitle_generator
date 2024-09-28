@@ -80,7 +80,7 @@ youtube_link = st.text_input("Enter YouTube Video Link")
 youtube_vedio_file_name=""
 if youtube_link:
     youtube_vedio_file_name=str(youtube_link)
-    st.write("Youtube Vedio link: ",youtube_vedio_file_name)
+    st.write("Youtube Vedio links: ",youtube_vedio_file_name)
     # try:
     #     yt = YouTube(youtube_link)
     #     video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
