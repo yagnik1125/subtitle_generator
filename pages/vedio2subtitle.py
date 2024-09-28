@@ -381,7 +381,8 @@ if youtube_link:
         st.error(f"generate_youtube_transcript_with_groq failed to download YouTube video from URL {youtube_link}: {e}")
         st.error(traceback.format_exc())
 
-    st.video(youtube_video_file_path)
+    # st.video(youtube_video_file_path)
+    
     # chunk_size=5*60000
     # temp_dir = "temp_chunks"
     # chunk_files=[]
