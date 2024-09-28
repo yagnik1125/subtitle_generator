@@ -83,7 +83,7 @@ if youtube_link:
     youtube_url_pattern = r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$'
     if not re.match(youtube_url_pattern, youtube_link):
         st.error(f"Invalid YouTube URL: {youtube_link}")
-        raise ValueError("Invalid YouTube URL provided.")
+        # raise ValueError("Invalid YouTube URL provided.")
     
     # try:
     #     file_path = yt_dlp_download(yt_url)
@@ -93,7 +93,7 @@ if youtube_link:
     #     raise
 
     st.write("Youtube Vedio links: ",youtube_link)
-    
+
     # try:
     #     yt = YouTube(youtube_link)
     #     video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
