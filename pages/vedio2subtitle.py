@@ -539,8 +539,8 @@ if st.button("Generate Subtitle"):
         st.error("Please upload an audio file.")
 
 if st.button("Generate Youtube Vedio Subtitle"):
-    if youtube_vedio_file_name:
-        st.video(youtube_vedio_file_name)
+    if youtube_video_file_path:
+        st.video(youtube_video_file_path)
         # audio_file = video2mp3(youtube_vedio_file_name)
         # audio_buffer = get_audio_buffer(audio_file)
         # audio = AudioSegment.from_file(audio_buffer)
