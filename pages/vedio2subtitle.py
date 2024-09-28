@@ -78,12 +78,16 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
         # }],
         # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
 
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',  # Download best video and audio, merge into mp4
-        'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
-        'postprocessors': [{
-            'key': 'FFmpegVideoConvertor',
-            'preferedformat': 'mp4',  # Ensure output is in mp4 format
-        }],
+        # 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',  # Download best video and audio, merge into mp4
+        # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+        # 'postprocessors': [{
+        #     'key': 'FFmpegVideoConvertor',
+        #     'preferedformat': 'mp4',  # Ensure output is in mp4 format
+        # }],
+
+        'format': 'bestvideo+bestaudio/best',  # Download the best video and audio available
+        'merge_output_format': 'mp4',  # Ensure video and audio are merged in mp4 format
+        'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),  # Output template
     }
 
     try:
