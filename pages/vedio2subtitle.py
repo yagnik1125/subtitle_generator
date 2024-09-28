@@ -73,7 +73,7 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
+            'preferredcodec': 'mp4',#aaya pela mp3 hatu etle vedio noto aavto
             'preferredquality': '192',
         }],
         'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
