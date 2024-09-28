@@ -79,14 +79,16 @@ youtube_link = st.text_input("Enter YouTube Video Link")
 # Download and process YouTube video if the link is provided
 youtube_vedio_file_name=""
 if youtube_link:
-    try:
-        yt = YouTube(youtube_link)
-        video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
-        video.download('temp_video.mp4')
-        youtube_vedio_file_name = 'temp_video.mp4'
-        st.write(f"Video downloaded and saved as: {youtube_vedio_file_name}")
-    except Exception as e:
-        st.error(f"Failed to download YouTube video. Error: {str(e)}")
+    youtube_vedio_file_name=str(youtube_link)
+    st.write("Youtube Vedio link: ",youtube_vedio_file_name)
+    # try:
+    #     yt = YouTube(youtube_link)
+    #     video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
+    #     video.download('temp_video.mp4')
+    #     youtube_vedio_file_name = 'temp_video.mp4'
+    #     st.write(f"Video downloaded and saved as: {youtube_vedio_file_name}")
+    # except Exception as e:
+    #     st.error(f"Failed to download YouTube video. Error: {str(e)}")
 
 
 # # Function to save video from frames
