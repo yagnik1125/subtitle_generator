@@ -26,6 +26,7 @@ import av
 import numpy as np
 from twilio.rest import Client
 from pytube import YouTube
+import re
 
 # https://pypi.org/project/streamlit-webrtc/
 # https://github.com/whitphx/streamlit-stt-app/tree/main
@@ -79,8 +80,20 @@ youtube_link = st.text_input("Enter YouTube Video Link")
 # Download and process YouTube video if the link is provided
 youtube_vedio_file_name=""
 if youtube_link:
-    youtube_vedio_file_name=str(youtube_link)
+    youtube_url_pattern = r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$'
+    if not re.match(youtube_url_pattern, youtube_link):
+        st.error(f"Invalid YouTube URL: {youtube_link}")
+        raise ValueError("Invalid YouTube URL provided.")
+    
+    # try:
+    #     file_path = yt_dlp_download(yt_url)
+    # except Exception as e:
+    #     logging.error(f"generate_youtube_transcript_with_groq failed to download YouTube video from URL {yt_url}: {e}")
+    #     logging.error(traceback.format_exc())
+    #     raise
+
     st.write("Youtube Vedio links: ",youtube_link)
+    
     # try:
     #     yt = YouTube(youtube_link)
     #     video = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first()
