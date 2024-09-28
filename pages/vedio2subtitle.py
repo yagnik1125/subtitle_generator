@@ -84,7 +84,8 @@ if youtube_link:
     if not re.match(youtube_url_pattern, youtube_link):
         st.error(f"Invalid YouTube URL: {youtube_link}")
         # raise ValueError("Invalid YouTube URL provided.")
-    
+    else:
+        st.write("Link OK")
     # try:
     #     file_path = yt_dlp_download(yt_url)
     # except Exception as e:
