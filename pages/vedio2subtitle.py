@@ -70,13 +70,13 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
         output_path = os.getcwd()
 
     ydl_opts = {
-        # 'format': 'bestaudio/best',
-        # 'postprocessors': [{
-        #     'key': 'FFmpegExtractAudio',
-        #     'preferredcodec': 'mp3',#aaya pela mp3 hatu etle vedio noto aavto
-        #     'preferredquality': '192',
-        # }],
-        # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',#aaya pela mp3 hatu etle vedio noto aavto
+            'preferredquality': '192',
+        }],
+        'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
 
         # 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',  # Download best video and audio, merge into mp4
         # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
@@ -85,9 +85,9 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
         #     'preferedformat': 'mp4',  # Ensure output is in mp4 format
         # }],
 
-        'format': 'bestvideo+bestaudio/best',  # Download the best video and audio available
-        'merge_output_format': 'mp4',  # Ensure video and audio are merged in mp4 format
-        'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),  # Output template
+        # 'format': 'bestvideo+bestaudio/best',  # Download the best video and audio available
+        # 'merge_output_format': 'mp4',  # Ensure video and audio are merged in mp4 format
+        # 'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),  # Output template
     }
 
     try:
@@ -382,7 +382,7 @@ if youtube_link:
         st.error(traceback.format_exc())
 
     # st.video(youtube_video_file_path)
-    
+
     # chunk_size=5*60000
     # temp_dir = "temp_chunks"
     # chunk_files=[]
