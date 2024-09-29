@@ -30,25 +30,8 @@ import yt_dlp
 import re
 import traceback
 
-# https://pypi.org/project/streamlit-webrtc/
-# https://github.com/whitphx/streamlit-stt-app/tree/main
-# https://whitphx-streamlit-stt-app-app-deepspeech-m6tt1k.streamlit.app/
-# https://console.twilio.com/
-# mu6WZ4JWsPctRztBUV16nApe2NQ6AwXH   --->secret key
-# account_sid = os.environ["ACe79864f19c78b628906f478fee8cce5e"]
-# auth_token = os.environ["0387f33bc7ea64e613896df0ba3b39ba"]
-
 # Initialize the Groq client
 client = Groq(api_key="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")
-
-# # Define a class to handle video streaming
-# class VideoTransformer(VideoTransformerBase):
-#     def __init__(self):
-#         self.frames = []
-    
-#     def transform(self, frame):
-#         self.frames.append(frame)
-#         return frame
 
 # Streamlit frontend for audio input and translation
 st.title("Subtitle Generator App")
@@ -93,6 +76,7 @@ def yt_dlp_download(yt_url:str, output_path:str = None) -> str:
             file_name = ydl.prepare_filename(result)
             mp4_file_path = file_name.rsplit('.', 1)[0] + '.mp4'
             # st.info(f"yt_dlp_download saved YouTube video to file path: {mp4_file_path}")
+            # st.write(mp4_file_path)
             return mp4_file_path
     except yt_dlp.utils.DownloadError as e:
         st.error(f"yt_dlp_download failed to download audio from URL {yt_url}: {e}")
@@ -262,7 +246,8 @@ def get_font_for_language(language):
         'georgian': 'Noto Sans Georgian',
         'german': 'Roboto',
         'greek': 'Noto Sans Greek',
-        'gujarati': 'Shruti',  # Custom font for Gujarati
+        # 'gujarati': 'Shruti',  # Custom font for Gujarati
+        'gujarati': 'Noto Sans Gujarati',  # Custom font for Gujarati
         'haitian creole': 'Roboto',
         'hausa': 'Roboto',
         'hawaiian': 'Roboto',
@@ -365,7 +350,7 @@ youtube_link = st.text_input("Enter YouTube Video Link")
 youtube_video_file_path=""
 if youtube_link:
     youtube_url_pattern = r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$'
-    # st.write("Youtube video links: ",youtube_link)
+    # st.write("Youtube video link: ",youtube_link)
     if not re.match(youtube_url_pattern, youtube_link):
         st.error(f"Invalid YouTube URL: {youtube_link}")
         # raise ValueError("Invalid YouTube URL provided.")
@@ -379,47 +364,54 @@ if youtube_link:
         st.error(f"generate_youtube_transcript_with_groq failed to download YouTube video from URL {youtube_link}: {e}")
         st.error(traceback.format_exc())
 
-    # st.video(youtube_video_file_path)
+#     # st.video(youtube_video_file_path)
 
-    # chunk_size=5*60000
-    # temp_dir = "temp_chunks"
-    # chunk_files=[]
-    # try:
-    #     chunk_files = create_audio_chunks(file_path, chunk_size, temp_dir)
-    # except Exception as e:
-    #     error_message = f"generate_youtube_transcript_with_groq failed to create audio chunks from file {file_path}: {e}"
-    #     st.error(error_message)
-    #     st.error(traceback.format_exc())
-    #     # raise error_message
+#     # --------------------------------------------------------------------------------------
+    
+#     # --------------------------------------------------------------------------------------
+    
+#     # chunk_size=5*60000
+#     # temp_dir = "temp_chunks"
+#     # chunk_files=[]
+#     # try:
+#     #     chunk_files = create_audio_chunks(file_path, chunk_size, temp_dir)
+#     # except Exception as e:
+#     #     error_message = f"generate_youtube_transcript_with_groq failed to create audio chunks from file {file_path}: {e}"
+#     #     st.error(error_message)
+#     #     st.error(traceback.format_exc())
+#     #     # raise error_message
 
-    # transcripts = []
-    # translations = []
-    # for file_name in chunk_files:
-    #     try:
-    #         st.info(f"Transcribing {file_name}")
-    #         filename = f"chunk.wav"
-    #         file_name.export(filename, format="wav")
-    #         with open(filename, "rb") as file:
-    #             transcription = client.audio.transcriptions.create(
-    #                 file=(filename, file.read()),  # Required audio file
-    #                 model="whisper-large-v3",  # Required model for transcription
-    #                 prompt="transcribe",
-    #                 response_format="verbose_json",  # Optional
-    #                 temperature=0.0  # Optional
-    #             )
-    #         # Append the chunk transcription to full transcription
-    #         transcription_segment=transcription.segments
-    #         translation_segment=copy.deepcopy(transcription_segment)
-    #         # transcript = transcribe_with_groq(file_name)
-    #         # transcripts.append(transcript)
-    #         # translation = translate_with_groq(transcript, "English")
-    #         # translations.append(translation)
+#     # transcripts = []
+#     # translations = []
+#     # for file_name in chunk_files:
+#     #     try:
+#     #         st.info(f"Transcribing {file_name}")
+#     #         filename = f"chunk.wav"
+#     #         file_name.export(filename, format="wav")
+#     #         with open(filename, "rb") as file:
+#     #             transcription = client.audio.transcriptions.create(
+#     #                 file=(filename, file.read()),  # Required audio file
+#     #                 model="whisper-large-v3",  # Required model for transcription
+#     #                 prompt="transcribe",
+#     #                 response_format="verbose_json",  # Optional
+#     #                 temperature=0.0  # Optional
+#     #             )
+#     #         # Append the chunk transcription to full transcription
+#     #         transcription_segment=transcription.segments
+#     #         translation_segment=copy.deepcopy(transcription_segment)
+#     #         # transcript = transcribe_with_groq(file_name)
+#     #         # transcripts.append(transcript)
+#     #         # translation = translate_with_groq(transcript, "English")
+#     #         # translations.append(translation)
             
-    #     except Exception as e:
-    #         error_message = f"generate_youtube_transcript_with_groq failed to transcribe file {file_name}: {e}"
-    #         st.error(error_message)
-    #         st.error(traceback.format_exc())
-    #         # raise error_message
+#     #     except Exception as e:
+#     #         error_message = f"generate_youtube_transcript_with_groq failed to transcribe file {file_name}: {e}"
+#     #         st.error(error_message)
+#     #         st.error(traceback.format_exc())
+#     #         # raise error_message
+
+
+
 
 
 selected_lang_tar = st.selectbox("Select the Target language for Subtitle", ['afrikaans', 'albanian', 'amharic', 'arabic', 'armenian', 'azerbaijani', 'basque', 'belarusian', 'bengali', 'bosnian', 'bulgarian', 'catalan', 'cebuano', 'chichewa', 'chinese (simplified)', 'chinese (traditional)', 'corsican', 'croatian', 'czech', 'danish', 'dutch', 'english', 'esperanto', 'estonian', 'filipino', 'finnish', 'french', 'frisian', 'galician', 'georgian', 'german', 'greek', 'gujarati', 'haitian creole', 'hausa', 'hawaiian', 'hebrew', 'hebrew', 'hindi', 'hmong', 'hungarian', 'icelandic', 'igbo', 'indonesian', 'irish', 'italian', 'japanese', 'javanese', 'kannada', 'kazakh', 'khmer', 'korean', 'kurdish (kurmanji)', 'kyrgyz', 'lao', 'latin', 'latvian', 'lithuanian', 'luxembourgish', 'macedonian', 'malagasy', 'malay', 'malayalam', 'maltese', 'maori', 'marathi', 'mongolian', 'myanmar (burmese)', 'nepali', 'norwegian', 'odia', 'pashto', 'persian', 'polish', 'portuguese', 'punjabi', 'romanian', 'russian', 'samoan', 'scots gaelic', 'serbian', 'sesotho', 'shona', 'sindhi', 'sinhala', 'slovak', 'slovenian', 'somali', 'spanish', 'sundanese', 'swahili', 'swedish', 'tajik', 'tamil', 'telugu', 'thai', 'turkish', 'ukrainian', 'urdu', 'uyghur', 'uzbek', 'vietnamese', 'welsh', 'xhosa', 'yiddish', 'yoruba', 'zulu'])
@@ -437,86 +429,78 @@ if st.button("Generate Subtitle"):
         audio = audio.set_channels(1)  # Ensure mono channel
         audio = audio.set_frame_rate(16000)  # Ensure frame rate is 16000 Hz
 
-        # Split the audio into chunks (3 sec per chunk)
-        chunk_duration_ms = 3000  
+        # Split the audio into chunks (60 sec per chunk)
+        chunk_duration_ms = 60000  
         chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
 
         # Variables to store full transcription and translation
         full_transcription = ""
         full_translation = ""
 
-        # --------------------without chunk starts--------------------------------------------------
-        filename = f"chunk.wav"
-        audio.export(filename, format="wav")
-        with open(filename, "rb") as file:
-            transcription = client.audio.transcriptions.create(
-                file=(filename, file.read()),  # Required audio file
-                model="whisper-large-v3",  # Required model for transcription
-                prompt="transcribe",
-                response_format="verbose_json",  # Optional
-                temperature=0.0  # Optional
-            )
-        # Append the chunk transcription to full transcription
-        transcription_segment=transcription.segments
-        translation_segment=copy.deepcopy(transcription_segment)
-        # translation_segment[0]['text']=translate_text(translation_segment[0]['text'], selected_lang_tar)
+        # # --------------------without chunk starts--------------------------------------------------
+        # filename = f"chunk.wav"
+        # audio.export(filename, format="wav")
+        # with open(filename, "rb") as file:
+        #     transcription = client.audio.transcriptions.create(
+        #         file=(filename, file.read()),  # Required audio file
+        #         model="whisper-large-v3",  # Required model for transcription
+        #         prompt="transcribe",
+        #         response_format="verbose_json",  # Optional
+        #         temperature=0.0  # Optional
+        #     )
+        # # Append the chunk transcription to full transcription
+        # transcription_segment=transcription.segments
+        # translation_segment=copy.deepcopy(transcription_segment)
+        # # translation_segment[0]['text']=translate_text(translation_segment[0]['text'], selected_lang_tar)
         
-        for seg in translation_segment:
-            # st.write(seg['text'])
-            seg['text']=translate_text(seg['text'], selected_lang_tar)
-            # seg['text']=translate_text(seg['text'], 'english')
+        # for seg in translation_segment:
+        #     # st.write(seg['text'])
+        #     seg['text']=translate_text(seg['text'], selected_lang_tar)
+        #     # seg['text']=translate_text(seg['text'], 'english')
 
-        # for i in range(len(transcription_segment)):
-        #     st.write(transcription_segment[i]['text'])
-        #     st.write(translation_segment[i]['text'])
+        # # for i in range(len(transcription_segment)):
+        # #     st.write(transcription_segment[i]['text'])
+        # #     st.write(translation_segment[i]['text'])
 
-        # transcription_text = transcription.text
-        # full_transcription += transcription_text + " "
-        # --------------------without chunk ends--------------------------------------------------
+        # # transcription_text = transcription.text
+        # # full_transcription += transcription_text + " "
+        # # --------------------without chunk ends--------------------------------------------------
 
-        # #----------------------------------chunk wise end----------------------------------------------------------
+        #----------------------------------chunk wise end----------------------------------------------------------
+        full_transcription_segments=[]
+        full_translation_segments=[]
+        # Process each chunk
+        for i, chunk in enumerate(chunks):
+            # Save the chunk to a temporary file
+            chunk_filename = f"chunk_{i}.wav"
+            chunk.export(chunk_filename, format="wav")
 
-        # # Process each chunk
-        # for i, chunk in enumerate(chunks):
-        #     # Save the chunk to a temporary file
-        #     chunk_filename = f"chunk_{i}.wav"
-        #     chunk.export(chunk_filename, format="wav")
+            # Transcribe the chunk using Groq API
+            with open(chunk_filename, "rb") as file:
+                transcription = client.audio.transcriptions.create(
+                    file=(chunk_filename, file.read()),  # Required audio file
+                    model="whisper-large-v3",  # Required model for transcription
+                    prompt="Transcribe",
+                    response_format="verbose_json",  # Optional
+                    temperature=0.0  # Optional
+                )
 
-        #     # Transcribe the chunk using Groq API
-        #     with open(chunk_filename, "rb") as file:
-        #         transcription = client.audio.transcriptions.create(
-        #             file=(chunk_filename, file.read()),  # Required audio file
-        #             model="whisper-large-v3",  # Required model for transcription
-        #             prompt="Transcribe",
-        #             response_format="verbose_json",  # Optional
-        #             temperature=0.0  # Optional
-        #         )
-        #     # Append the chunk transcription to full transcription
-        #     chunk_transcription_text = transcription.text
-        #     full_transcription += chunk_transcription_text + " "
+            transcription_segment=transcription.segments
+            full_transcription_segments.extend(transcription_segment)
+            translation_segment=copy.deepcopy(transcription_segment)
+            for seg in translation_segment:
+                # st.write(seg['text'])
+                seg['text']=translate_text(seg['text'], selected_lang_tar)
+                seg['start']=seg['start']+((chunk_duration_ms/1000)*i)
+                seg['end']=seg['end']+((chunk_duration_ms/1000)*i)
+                # seg['text']=translate_text(seg['text'], 'english')
+            full_translation_segments.extend(translation_segment)
 
-        #     # chunk_translation = lt.translate(transcription.text, source=selected_lang_src, target=selected_lang_tar)
-        #     chunk_translation = translate_text(chunk_transcription_text, selected_lang_tar)
-        #     full_translation += chunk_translation + " "
-
-        #     # Show progress on the frontend
-        #     st.write(f"Processed chunk {i+1}/{len(chunks)}")
-        #     st.audio(chunk_filename, format="wav") 
-        #     st.write(f"Chunk Transcription: {chunk_transcription_text}")
-        #     st.write(f"Chunk Translation: {chunk_translation}")
-
-        # #----------------------------------chunk wise end----------------------------------------------------------
-
-        # # Show the final combined transcription and translation
-        # st.write("Final Transcription:")
-        # st.write(full_transcription)
-
-        # st.write(f"Final Translation:")
-        # st.write(full_translation)
-
+        # st.write(full_translation_segments)
+        #----------------------------------chunk wise end----------------------------------------------------------
         # --------------------------subtitle start----------------------------------------------
         subtitle_file = "output_subtitle.vtt"
-        write_vtt(translation_segment, subtitle_file)
+        write_vtt(full_translation_segments, subtitle_file)
 
         output_video = "output_video_with_subtitles.mp4"
         add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, get_font_for_language(selected_lang_tar))
@@ -537,18 +521,35 @@ if st.button("Generate Subtitle"):
 
 if st.button("Generate Youtube Vedio Subtitle"):
     if youtube_video_file_path:
-        st.video(youtube_video_file_path)
-        # audio_file = video2mp3(youtube_vedio_file_name)
-        # audio_buffer = get_audio_buffer(audio_file)
-        # audio = AudioSegment.from_file(audio_buffer)
-        # audio = audio.set_channels(1)
-        # audio = audio.set_frame_rate(16000)
+        # youtube_url_pattern = r'^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$'
+        # # st.write("Youtube video link: ",youtube_link)
+        # if not re.match(youtube_url_pattern, youtube_link):
+        #     st.error(f"Invalid YouTube URL: {youtube_link}")
+        #     # raise ValueError("Invalid YouTube URL provided.")
+        # # else:
+        # #     st.write("Link OK")
 
-        # chunk_duration_ms = 3000  
-        # chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
 
-        # full_transcription = ""
-        # full_translation = ""
+        # try:
+        #     youtube_video_file_path = yt_dlp_download(youtube_link)
+        # except Exception as e:
+        #     st.error(f"generate_youtube_transcript_with_groq failed to download YouTube video from URL {youtube_link}: {e}")
+        #     st.error(traceback.format_exc())
+
+        # st.video(youtube_video_file_path)
+        audio_file = video2mp3(youtube_video_file_path)
+        audio_buffer = get_audio_buffer(audio_file)
+        audio = AudioSegment.from_file(audio_buffer)
+        audio = audio.set_channels(1)
+        audio = audio.set_frame_rate(16000)
+
+        chunk_duration_ms = 60000  
+        chunks = [audio[i:i + chunk_duration_ms] for i in range(0, len(audio), chunk_duration_ms)]
+
+        full_transcription = ""
+        full_translation = ""
+
+        # # -----------------------------without chunk start--------------------------------------
 
         # filename = f"chunk.wav"
         # audio.export(filename, format="wav")
@@ -566,13 +567,46 @@ if st.button("Generate Youtube Vedio Subtitle"):
         # for seg in translation_segment:
         #     seg['text'] = translate_text(seg['text'], selected_lang_tar)
 
-        # subtitle_file = "output_subtitle.vtt"
-        # write_vtt(translation_segment, subtitle_file)
+        # # -----------------------------without chunk end--------------------------------------
 
-        # output_video = "output_video_with_subtitles.mp4"
-        # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, get_font_for_language(selected_lang_tar))
+        # -----------------------------with chunk start-------------------------------------
+        full_transcription_segments=[]
+        full_translation_segments=[]
+        # Process each chunk
+        for i, chunk in enumerate(chunks):
+            # Save the chunk to a temporary file
+            chunk_filename = f"chunk_{i}.wav"
+            chunk.export(chunk_filename, format="wav")
 
-        # st.video(output_video)
+            # Transcribe the chunk using Groq API
+            with open(chunk_filename, "rb") as file:
+                transcription = client.audio.transcriptions.create(
+                    file=(chunk_filename, file.read()),  # Required audio file
+                    model="whisper-large-v3",  # Required model for transcription
+                    prompt="Transcribe",
+                    response_format="verbose_json",  # Optional
+                    temperature=0.0  # Optional
+                )
+
+            transcription_segment=transcription.segments
+            full_transcription_segments.extend(transcription_segment)
+            translation_segment=copy.deepcopy(transcription_segment)
+            for seg in translation_segment:
+                # st.write(seg['text'])
+                seg['text']=translate_text(seg['text'], selected_lang_tar)
+                seg['start']=seg['start']+((chunk_duration_ms/1000)*i)
+                seg['end']=seg['end']+((chunk_duration_ms/1000)*i)
+                # seg['text']=translate_text(seg['text'], 'english')
+            full_translation_segments.extend(translation_segment)
+        # -----------------------------with chunk end-------------------------------------
+
+        subtitle_youtube_file = "output_subtitle.vtt"
+        write_vtt(full_translation_segments, subtitle_youtube_file)
+
+        output_youtube_video = "output_video_with_subtitles.mp4"
+        add_subtitles_to_video(youtube_video_file_path, subtitle_youtube_file, output_youtube_video, get_font_for_language(selected_lang_tar))
+
+        st.video(output_youtube_video)
 
     else:
         st.error("Please upload a video file or provide a YouTube link.")
