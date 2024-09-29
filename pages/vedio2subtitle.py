@@ -507,7 +507,17 @@ if st.button("Generate Subtitle"):
         # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video, 'Noto Sans Devanagari')
         # add_subtitles_to_video(vedio_file_name, subtitle_file, output_video)
 
-        st.video(output_video)
+        with open(output_video, "rb") as f:
+            video_data = f.read()
+
+        # st.video(output_youtube_video)
+        
+        st.download_button(
+            label="Download Video",
+            data=video_data,
+            file_name="downloaded_video.mp4",  # Name of the file when downloaded
+            mime="video/mp4"  # MIME type for mp4 files
+        )
         # --------------------------subtitle end----------------------------------------------
         # #------------------------------------vedio generator--------------------------------------
 
@@ -610,7 +620,7 @@ if st.button("Generate Youtube Vedio Subtitle"):
             video_data = f.read()
 
         # st.video(output_youtube_video)
-        
+
         st.download_button(
             label="Download Video",
             data=video_data,
