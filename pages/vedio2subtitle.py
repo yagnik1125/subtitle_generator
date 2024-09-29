@@ -606,7 +606,17 @@ if st.button("Generate Youtube Vedio Subtitle"):
         output_youtube_video = "output_video_with_subtitles.mp4"
         add_subtitles_to_video(youtube_video_file_path, subtitle_youtube_file, output_youtube_video, get_font_for_language(selected_lang_tar))
 
-        st.video(output_youtube_video)
+        with open(output_youtube_video, "rb") as f:
+            video_data = f.read()
+
+        # st.video(output_youtube_video)
+        
+        st.download_button(
+            label="Download Video",
+            data=video_data,
+            file_name="downloaded_video.mp4",  # Name of the file when downloaded
+            mime="video/mp4"  # MIME type for mp4 files
+        )
 
     else:
         st.error("Please upload a video file or provide a YouTube link.")
