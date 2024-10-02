@@ -15,7 +15,7 @@ import copy
 
 
 # Initialize the Groq client
-client = Groq(api_key="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")
+client = Groq(api_key="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")
 
 
 # Streamlit frontend for audio input and translation
