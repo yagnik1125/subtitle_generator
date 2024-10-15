@@ -512,12 +512,12 @@ if st.button("Generate Subtitle"):
 
         st.video(output_video)
         
-        st.download_button(
-            label="Download Video",
-            data=video_data,
-            file_name="downloaded_video.mp4",  # Name of the file when downloaded
-            mime="video/mp4"  # MIME type for mp4 files
-        )
+        # st.download_button(
+        #     label="Download Video",
+        #     data=video_data,
+        #     file_name="downloaded_video.mp4",  # Name of the file when downloaded
+        #     mime="video/mp4"  # MIME type for mp4 files
+        # )
         # --------------------------subtitle end----------------------------------------------
         # #------------------------------------vedio generator--------------------------------------
 
