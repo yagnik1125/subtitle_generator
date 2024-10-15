@@ -510,7 +510,7 @@ if st.button("Generate Subtitle"):
         with open(output_video, "rb") as f:
             video_data = f.read()
 
-        # st.video(output_youtube_video)
+        st.video(output_video)
         
         st.download_button(
             label="Download Video",
@@ -619,7 +619,7 @@ if st.button("Generate Youtube Vedio Subtitle"):
         with open(output_youtube_video, "rb") as f:
             video_data = f.read()
 
-        # st.video(output_youtube_video)
+        st.video(output_youtube_video)
 
         st.download_button(
             label="Download Video",
